@@ -1,0 +1,63 @@
+02:00.0 Ethernet controller: Broadcom Corporation NetXtreme II BCM5716 Gigabit Ethernet (rev 20)
+	Subsystem: Dell Device 0488
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0, Cache Line Size: 64 bytes
+	Interrupt: pin A routed to IRQ 48
+	Region 0: Memory at ea000000 (64-bit, non-prefetchable) [size=32M]
+	Capabilities: [48] Power Management version 3
+		Flags: PMEClk- DSI- D1- D2- AuxCurrent=0mA PME(D0+,D1-,D2-,D3hot+,D3cold+)
+		Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=1 PME-
+	Capabilities: [50] Vital Product Data
+		Product Name: Broadcom NetXtreme II Ethernet Controller
+		Read-only fields:
+			[PN] Part number: BCM95716C1
+			[EC] Engineering changes: 220197-3
+			[SN] Serial number: 0123456789
+			[MN] Manufacture ID: 31 30 32 38
+			[V0] Vendor specific: 6.2.15
+			[RV] Reserved: checksum good, 22 byte(s) reserved
+		End
+	Capabilities: [58] MSI: Enable- Count=1/16 Maskable- 64bit+
+		Address: 0000000000000000  Data: 0000
+	Capabilities: [a0] MSI-X: Enable+ Count=9 Masked-
+		Vector table: BAR=0 offset=0000c000
+		PBA: BAR=0 offset=0000e000
+	Capabilities: [ac] Express (v2) Endpoint, MSI 00
+		DevCap:	MaxPayload 512 bytes, PhantFunc 0, Latency L0s <4us, L1 <64us
+			ExtTag- AttnBtn- AttnInd- PwrInd- RBE+ FLReset-
+		DevCtl:	Report errors: Correctable- Non-Fatal+ Fatal+ Unsupported+
+			RlxdOrd+ ExtTag- PhantFunc- AuxPwr+ NoSnoop+
+			MaxPayload 128 bytes, MaxReadReq 512 bytes
+		DevSta:	CorrErr+ UncorrErr- FatalErr- UnsuppReq+ AuxPwr+ TransPend-
+		LnkCap:	Port #0, Speed 2.5GT/s, Width x4, ASPM L0s L1, Latency L0 <2us, L1 <2us
+			ClockPM- Surprise- LLActRep- BwNot-
+		LnkCtl:	ASPM Disabled; RCB 64 bytes Disabled- Retrain- CommClk+
+			ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+		LnkSta:	Speed 2.5GT/s, Width x2, TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
+		DevCap2: Completion Timeout: Range ABCD, TimeoutDis+
+		DevCtl2: Completion Timeout: 65ms to 210ms, TimeoutDis-
+		LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- SpeedDis-, Selectable De-emphasis: -6dB
+			 Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
+			 Compliance De-emphasis: -6dB
+		LnkSta2: Current De-emphasis Level: -6dB
+	Capabilities: [100 v1] Device Serial Number 04-7d-7b-ff-fe-3b-2a-cf
+	Capabilities: [110 v1] Advanced Error Reporting
+		UESta:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+		UEMsk:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt+ UnxCmplt+ RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+		UESvrt:	DLP+ SDES+ TLP+ FCP+ CmpltTO+ CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC+ UnsupReq- ACSViol-
+		CESta:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
+		CEMsk:	RxErr- BadTLP+ BadDLLP+ Rollover+ Timeout+ NonFatalErr+
+		AERCap:	First Error Pointer: 00, GenCap+ CGenEn- ChkCap+ ChkEn-
+	Capabilities: [150 v1] Power Budgeting <?>
+	Capabilities: [160 v1] Virtual Channel
+		Caps:	LPEVC=0 RefClk=100ns PATEntryBits=1
+		Arb:	Fixed- WRR32- WRR64- WRR128-
+		Ctrl:	ArbSelect=Fixed
+		Status:	InProgress-
+		VC0:	Caps:	PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+			Arb:	Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+			Ctrl:	Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
+			Status:	NegoPending- InProgress-
+	Kernel driver in use: bnx2
+	Kernel modules: bnx2
