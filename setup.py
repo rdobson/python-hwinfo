@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='hwinfo',
+    name='python-hwinfo',
     author='Rob Dobson',
     packages=find_packages(),
     )

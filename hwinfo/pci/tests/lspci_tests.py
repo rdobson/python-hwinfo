@@ -1,11 +1,11 @@
 """Unit tests for the lspci module"""
 
 import unittest
-from pci.lspci import *
+from hwinfo.pci.lspci import *
 
 class TestSingleDeviceVVParse(unittest.TestCase):
 
-    SAMPLE_DEVICE_FILE = 'pci/tests/data/single_network_device_lspci_vv'
+    SAMPLE_DEVICE_FILE = 'hwinfo/pci/tests/data/single_network_device_lspci_vv'
     DEVICE_DATA = ""
 
     DEVICE_REC = {
