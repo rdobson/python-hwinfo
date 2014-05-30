@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/rdobson/hwinfo/badge.png)](https://coveralls.io/r/rdobson/hwinfo)
+
 hwinfo
 ======
 
