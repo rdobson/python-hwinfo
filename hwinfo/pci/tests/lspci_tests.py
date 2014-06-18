@@ -26,7 +26,6 @@ class TestSingleDeviceVVParse(unittest.TestCase):
         self.parser = LspciVVParser(data)
 
     def _assert_rec_key(self, rec, key):
-        rec = self.parser.parse_items().pop()
         self.assertEquals(rec[key], self.DEVICE_REC[key])
 
     def test_pci_device_string(self):
@@ -62,3 +61,47 @@ class TestMultiDeviceVVParse(unittest.TestCase):
     def test_parse_all_devices(self):
         recs = self.parser.parse_items()
         self.assertEqual(len(recs), 58)
+
+class TestSingleDeviceNParse(unittest.TestCase):
+
+    DATA = "ff:10.5 0880: 8086:0eb5 (rev 04)"
+
+    DEVICE_REC = {
+        'pci_device_bus_id': 'ff:10.5',
+        'pci_vendor_id': '8086',
+        'pci_device_id': '0eb5',
+        'pci_device_type_id': '0880',
+    }
+
+    def setUp(self):
+        self.parser = LspciNParser(self.DATA)
+        self.rec = self.parser.parse_items().pop()
+
+    def _assert_rec_key(self, key):
+        self.assertEquals(self.rec[key], self.DEVICE_REC[key])
+
+    def test_pci_device_bus_id(self):
+        self._assert_rec_key('pci_device_bus_id')
+
+    def test_pci_vendor_id(self):
+        self._assert_rec_key('pci_vendor_id')
+
+    def test_pci_device_id(self):
+        self._assert_rec_key('pci_device_id')
+
+    def test_pci_device_type_id(self):
+        self._assert_rec_key('pci_device_type_id')
+
+class TestMultiDeviceNParse(unittest.TestCase):
+ 
+    SAMPLE_DEVICE_FILE = "%s/lspci_n" % DATA_DIR
+
+    def setUp(self):
+        fh = open(self.SAMPLE_DEVICE_FILE)
+        data = fh.read()
+        fh.close()
+        self.parser = LspciNParser(data)
+
+    def test_parse_all_devices(self):
+        recs = self.parser.parse_items()
+        self.assertEqual(len(recs), 171)
