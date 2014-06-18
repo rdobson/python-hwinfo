@@ -10,6 +10,22 @@ class CommandParser(object):
     DATA = None
     MUST_HAVE_FIELDS = []
 
+    def __init__(self, data, regexs=None, seperator=None):
+        self.set_data(data)
+        self.set_regexs(regexs)
+        self.set_seperator(seperator)
+
+    def set_data(self, data):
+        self.DATA = data.strip()
+
+    def set_regexs(self, regexs):
+        if regexs:
+            self.ITEM_REGEXS = regexs
+
+    def set_seperator(self, seperator):
+        if seperator:
+            self.ITEM_SEPERATOR = seperator
+
     def parse_item(self, item):
         rec = {}
         for regex in self.ITEM_REGEXS:

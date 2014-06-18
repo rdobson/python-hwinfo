@@ -14,7 +14,7 @@ class LspciVVParser(CommandParser):
         r'Subsystem:\ (?P<pci_device_sub_string>(.)*)\n',
     ]
 
-    ITEM_SEPERATOR = r'^\n'
+    ITEM_SEPERATOR = "\n\n"
 
     MUST_HAVE_FIELDS = [
         'pci_device_bus_id',

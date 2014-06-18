@@ -33,11 +33,8 @@ lo        Link encap:Local Loopback
           collisions:0 txqueuelen:0
           RX bytes:3684827 (3.6 MB)  TX bytes:3684827 (3.6 MB)
 """
-
-	cp = CommandParser()
-	cp.ITEM_REGEXS = [r'Link encap:(?P<encap>[\w]+)']
-	cp.ITEM_SEPERATOR = '\n\n'
-	cp.DATA = data.strip()
+        regexs = [r'Link encap:(?P<encap>[\w]+)']
+	cp = CommandParser(data, regexs, seperator='\n\n')
 	recs = cp.parse_items()
 	to_match = ['Ethernet', 'Local']
 	for rec in recs:
@@ -56,9 +53,8 @@ eth0      Link encap:Ethernet  HWaddr f8:b1:56:d5:e6:8c
           RX bytes:1525454582 (1.5 GB)  TX bytes:1125497021 (1.1 GB)
           Interrupt:20 Memory:fb200000-fb220000
 """
-        cp = CommandParser()
-        cp.ITEM_REGEXS = ['Link encap:(?P<encap>[\w]+)']
-        cp.DATA = data.strip()
+        regexs = ['Link encap:(?P<encap>[\w]+)']
+        cp = CommandParser(data, regexs)
         rec = cp.parse()
         self.assertEqual(rec['encap'], 'Ethernet')
 
@@ -74,17 +70,14 @@ eth0      Link encap:Ethernet  HWaddr f8:b1:56:d5:e6:8c
           RX bytes:1525454582 (1.5 GB)  TX bytes:1125497021 (1.1 GB)
           Interrupt:20 Memory:fb200000-fb220000
 """
-        cp = CommandParser()
-        cp.ITEM_REGEXS = ['Link encap:(?P<encap>[\w]+)']
-        cp.DATA = data.strip()
+        regexs = ['Link encap:(?P<encap>[\w]+)']
+        cp = CommandParser(data, regexs)
         rec = cp.parse_items()[0]
         self.assertEqual(rec['encap'], 'Ethernet')
 
 
     def test_assert_raises_use_parse_items(self):
         data = "thisdoesnotmatter"
-        cp = CommandParser()
-        cp.ITEM_REGEXS = [r'(?<anything>[\w+])']
-        cp.DATA = data
-        cp.ITEM_SEPERATOR = '\n'
+        regexs = [r'(?<anything>[\w+])']
+        cp = CommandParser(data, regexs, seperator='\n')
         self.assertRaises(Exception, cp.parse)
