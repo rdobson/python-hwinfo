@@ -19,9 +19,9 @@ class CommandParser(object):
 
         return rec
 
-    def parse(self):
+    def parse_items(self):
         if not self.ITEM_SEPERATOR:
-            return self.parse_item(self.DATA)
+            return [self.parse_item(self.DATA)]
         else:
             recs = []
             for data in self.DATA.split(self.ITEM_SEPERATOR):
@@ -29,3 +29,9 @@ class CommandParser(object):
                 recs.append(rec)
             return recs
 
+    def parse(self):
+        if self.ITEM_SEPERATOR:
+            raise Exception("A seperator has been specified: '%s'. " + \
+            "Please use 'parse_items' instead")
+
+        return self.parse_item(self.DATA)
