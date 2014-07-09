@@ -1,0 +1,154 @@
+BIOS device: eth0
+Kernel name: eth0
+Permanent MAC: 6C:AE:8B:22:B7:CA
+Assigned MAC : 6C:AE:8B:22:B7:CA
+Driver: igb
+Driver version: 5.2.5
+Firmware version: 1.52.0
+Bus Info: 0000:06:00.0
+PCI name      : 0000:06:00.0
+PCI Slot      : embedded
+SMBIOS Device Type: Ethernet
+SMBIOS Instance: 2
+SMBIOS Label: Intel i350
+sysfs Index: 2
+sysfs Label: Intel i350
+Embedded Index: 1
+
+BIOS device: eth1
+Kernel name: eth1
+Permanent MAC: 6C:AE:8B:22:B7:CB
+Assigned MAC : 6C:AE:8B:22:B7:CB
+Driver: igb
+Driver version: 5.2.5
+Firmware version: 1.52.0
+Bus Info: 0000:06:00.1
+PCI name      : 0000:06:00.1
+PCI Slot      : embedded
+SMBIOS Device Type: Ethernet
+SMBIOS Instance: 3
+SMBIOS Label: Intel i350
+sysfs Index: 3
+sysfs Label: Intel i350
+Embedded Index: 2
+
+BIOS device: eth2
+Kernel name: eth2
+Permanent MAC: 6C:AE:8B:22:B7:CC
+Assigned MAC : 6C:AE:8B:22:B7:CC
+Driver: igb
+Driver version: 5.2.5
+Firmware version: 1.52.0
+Bus Info: 0000:06:00.2
+PCI name      : 0000:06:00.2
+PCI Slot      : embedded
+SMBIOS Device Type: Ethernet
+SMBIOS Instance: 4
+SMBIOS Label: Intel i350
+sysfs Index: 4
+sysfs Label: Intel i350
+Embedded Index: 3
+
+BIOS device: eth3
+Kernel name: eth3
+Permanent MAC: 6C:AE:8B:22:B7:CD
+Assigned MAC : 6C:AE:8B:22:B7:CD
+Driver: igb
+Driver version: 5.2.5
+Firmware version: 1.52.0
+Bus Info: 0000:06:00.3
+PCI name      : 0000:06:00.3
+PCI Slot      : embedded
+SMBIOS Device Type: Ethernet
+SMBIOS Instance: 5
+SMBIOS Label: Intel i350
+sysfs Index: 5
+sysfs Label: Intel i350
+Embedded Index: 4
+
+BIOS device: eth4
+Kernel name: eth4
+Permanent MAC: 5C:F3:FC:36:65:A0
+Assigned MAC : 5C:F3:FC:36:65:A0
+Driver: be2net
+Driver version: 4.6.62.0u
+Firmware version: 4.2.412.0
+Bus Info: 0000:0c:00.0
+PCI name      : 0000:0c:00.0
+PCI Slot      : Unknown
+Index in slot: 1
+
+BIOS device: eth5
+Kernel name: eth5
+Permanent MAC: 5C:F3:FC:36:65:A4
+Assigned MAC : 5C:F3:FC:36:65:A4
+Driver: be2net
+Driver version: 4.6.62.0u
+Firmware version: 4.2.412.0
+Bus Info: 0000:0c:00.1
+PCI name      : 0000:0c:00.1
+PCI Slot      : Unknown
+Index in slot: 2
+
+BIOS device: eth6
+Kernel name: eth6
+Permanent MAC: 00:00:C9:E9:64:E4
+Assigned MAC : 00:00:C9:E9:64:E4
+Driver: be2net
+Driver version: 4.6.62.0u
+Firmware version: 4.2.412.0
+Bus Info: 0000:11:00.0
+PCI name      : 0000:11:00.0
+PCI Slot      : 3
+SMBIOS Label: PCI-Express Slot 3
+Index in slot: 1
+
+BIOS device: eth7
+Kernel name: eth7
+Permanent MAC: 00:00:C9:E9:64:E8
+Assigned MAC : 00:00:C9:E9:64:E8
+Driver: be2net
+Driver version: 4.6.62.0u
+Firmware version: 4.2.412.0
+Bus Info: 0000:11:00.1
+PCI name      : 0000:11:00.1
+PCI Slot      : 3
+SMBIOS Label: PCI-Express Slot 3
+Index in slot: 2
+
+BIOS device: eth8
+Kernel name: usb0
+Permanent MAC: 6E:AE:8B:22:B7:C9
+Assigned MAC : 6E:AE:8B:22:B7:C9
+Driver: cdc_ether
+Driver version: 22-Aug-2005
+Firmware version: CDC Ethernet Device
+Bus Info: usb-0000:00:1d.0-1.1.5
+
+BIOS device: eth9
+Kernel name: vif1.0
+Permanent MAC: FE:FF:FF:FF:FF:FF
+Assigned MAC : FE:FF:FF:FF:FF:FF
+Driver: vif
+Driver version: 
+Firmware version: 
+Bus Info: vif-1-0
+
+BIOS device: eth10
+Kernel name: vif3.0
+Permanent MAC: FE:FF:FF:FF:FF:FF
+Assigned MAC : FE:FF:FF:FF:FF:FF
+Driver: vif
+Driver version: 
+Firmware version: 
+Bus Info: vif-3-0
+
+BIOS device: eth11
+Kernel name: vif6.0
+Permanent MAC: FE:FF:FF:FF:FF:FF
+Assigned MAC : FE:FF:FF:FF:FF:FF
+Driver: vif
+Driver version: 
+Firmware version: 
+Bus Info: vif-6-0
+
