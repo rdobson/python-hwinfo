@@ -105,3 +105,73 @@ class TestMultiDeviceNParse(unittest.TestCase):
     def test_parse_all_devices(self):
         recs = self.parser.parse_items()
         self.assertEqual(len(recs), 171)
+
+
+class TestSingleDeviceNNMMParse(unittest.TestCase):
+
+    SAMPLE_DATA = '02:00.0 "Ethernet controller [0200]" "Broadcom Corporation [14e4]" "NetXtreme II BCM5716 Gigabit Ethernet [163b]" -r20 "Dell [1028]" "Device [02a3]'
+
+    DEVICE_REC = {
+        'pci_device_bus_id': '02:00.0',
+        'pci_device_type_id': '0200',
+        'pci_device_type_name': 'Ethernet controller',
+        'pci_vendor_name': 'Broadcom Corporation',
+        'pci_vendor_id': '14e4',
+        'pci_device_id': '163b',
+        'pci_device_name': 'NetXtreme II BCM5716 Gigabit Ethernet',
+        'pci_subvendor_name': 'Dell',
+        'pci_subvendor_id': '1028',
+        'pci_subdevice_name': 'Device',
+        'pci_subdevice_id': '02a3',
+    }
+
+    def setUp(self):
+        self.parser = LspciNNMMParser(self.SAMPLE_DATA)
+        self.rec = self.parser.parse_items()[0]
+
+    def _assert_rec_key(self, key):
+        self.assertEquals(self.rec[key], self.DEVICE_REC[key])
+
+    def test_pci_device_bus_id(self):
+        self._assert_rec_key('pci_device_bus_id')
+
+    def test_pci_device_type_id(self):
+        self._assert_rec_key('pci_device_type_id')
+
+    def test_pci_device_type_name(self):
+        self._assert_rec_key('pci_device_type_name')
+
+    def test_pci_vendor_name(self):
+        self._assert_rec_key('pci_vendor_name')
+
+    def test_pci_vendor_id(self):
+        self._assert_rec_key('pci_vendor_id')
+
+    def test_pci_device_id(self):
+        self._assert_rec_key('pci_device_id')
+
+    def test_pci_device_name(self):
+        self._assert_rec_key('pci_device_name')
+
+    def test_pci_subvendor_name(self):
+        self._assert_rec_key('pci_subvendor_name')
+
+    def test_pci_subdevice_name(self):
+        self._assert_rec_key('pci_subdevice_name')
+
+    def test_pci_subdevice_id(self):
+        self._assert_rec_key('pci_subdevice_id')
+
+class TestMultiDeviceNNMMParse(unittest.TestCase):
+
+    SAMPLE_FILE = '%s/lspci-nnmm' % DATA_DIR
+
+    def setUp(self):
+        fh = open(self.SAMPLE_FILE)
+        data = fh.read()
+        fh.close()
+        self.parser = LspciNNMMParser(data)
+
+    def test_number_of_devices(self):
+        recs = self.parser.parse_items()
+        self.assertEqual(len(recs), 37)
