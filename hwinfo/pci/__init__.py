@@ -6,7 +6,10 @@ class PCIDevice(object):
         self.rec = record
 
     def lookup_value(self, k):
-        return self.rec[k]
+        if k in self.rec:
+            return self.rec[k]
+        else:
+            return "Unknown"
 
     def get_device_name(self):
         name = self.lookup_value('pci_device_name')
@@ -60,3 +63,5 @@ class PCIDevice(object):
 
         if self.is_subdevice():
             return "%s %s (%s %s)" % (self.get_subvendor_name(), self.get_subdevice_name(), self.get_vendor_name(), self.get_device_name())
+        else:
+            return "%s %s" % (self.get_vendor_name(), self.get_device_name())

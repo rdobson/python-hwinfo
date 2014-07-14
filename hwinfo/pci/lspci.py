@@ -39,15 +39,19 @@ class LspciNParser(CommandParser):
         'pci_device_type_id',
     ]
 
+
+LABEL_REGEX = r'[\w+\ \.\-\/]+'
+CODE_REGEX = r'[0-9a-fA-F]{4}'
+
 class LspciNNMMParser(CommandParser):
     """Parser object for the output of lspci -nnmm"""
 
     #02:00.1 "Ethernet controller [0200]" "Broadcom Corporation [14e4]" "NetXtreme II BCM5716 Gigabit Ethernet [163b]" -r20 "Dell [1028]" "Device [02a3]"
 
     ITEM_REGEXS = [
-        r'(?P<pci_device_bus_id>([0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]))\ "(?P<pci_device_type_name>[\w+\ \.\-]+)\ \[(?P<pci_device_type_id>[0-9a-fA-F]{4})\]"' \
-        + r'\ "(?P<pci_vendor_name>[\w+\ \.\-]+)\ \[(?P<pci_vendor_id>[0-9a-fA-F]{4})\]"\ "(?P<pci_device_name>[\w+\ \.\-]+)\ \[(?P<pci_device_id>[0-9a-fA-F]{4})\]"' \
-        + r'\ .*\ "((?P<pci_subvendor_name>[\w+\ \.\-]+)\ \[(?P<pci_subvendor_id>[0-9a-fA-F]{4})\])*"\ "((?P<pci_subdevice_name>[\w+\ \.\-]+)\ \[(?P<pci_subdevice_id>[0-9a-fA-F]{4})\])*',
+        r'(?P<pci_device_bus_id>([0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]))\ "(?P<pci_device_type_name>' + LABEL_REGEX + r')\ \[(?P<pci_device_type_id>' + CODE_REGEX + r')\]"' \
+        + r'\ "(?P<pci_vendor_name>' + LABEL_REGEX + r')\ \[(?P<pci_vendor_id>' + CODE_REGEX + r')\]"\ "(?P<pci_device_name>' + LABEL_REGEX + r')\ \[(?P<pci_device_id>' + CODE_REGEX + r')\]"' \
+        + r'\ .*\ "((?P<pci_subvendor_name>' + LABEL_REGEX + r')\ \[(?P<pci_subvendor_id>' + CODE_REGEX + r')\])*"\ "((?P<pci_subdevice_name>' + LABEL_REGEX + r')\ \[(?P<pci_subdevice_id>' + CODE_REGEX + r')\])*',
     ]
 
     ITEM_SEPERATOR = "\n"

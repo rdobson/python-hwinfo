@@ -162,6 +162,43 @@ class TestSingleDeviceNNMMParse(unittest.TestCase):
     def test_pci_subdevice_id(self):
         self._assert_rec_key('pci_subdevice_id')
 
+class LsiDeviceParse(TestSingleDeviceNNMMParse):
+
+    SAMPLE_DATA = '03:00.0 "SCSI storage controller [0100]" "LSI Logic / Symbios Logic [1000]" "SAS1068E PCI-Express Fusion-MPT SAS [0058]" -r08 "Dell [1028]" "SAS 6/iR Integrated Blades RAID Controller [1f0f]"'
+
+    DEVICE_REC = {
+        'pci_device_bus_id': '03:00.0',
+        'pci_device_type_id': '0100',
+        'pci_device_type_name': 'SCSI storage controller',
+        'pci_vendor_name': 'LSI Logic / Symbios Logic',
+        'pci_vendor_id': '1000',
+        'pci_device_id': '0058',
+        'pci_device_name': 'SAS1068E PCI-Express Fusion-MPT SAS',
+        'pci_subvendor_name': 'Dell',
+        'pci_subvendor_id': '1028',
+        'pci_subdevice_name': 'SAS 6/iR Integrated Blades RAID Controller',
+        'pci_subdevice_id': '1f0f',
+    }
+
+
+class IntelUSBControllerDeviceParse(TestSingleDeviceNNMMParse):
+
+    SAMPLE_DATA = '00:1d.0 "USB controller [0c03]" "Intel Corporation [8086]" "5 Series/3400 Series Chipset USB2 Enhanced Host Controller [3b34]" -r05 -p20 "Dell [1028]" "Device [02a3]"'
+
+    DEVICE_REC = {
+        'pci_device_bus_id': '00:1d.0',
+        'pci_device_type_id': '0c03',
+        'pci_device_type_name': 'USB controller',
+        'pci_vendor_name': 'Intel Corporation',
+        'pci_vendor_id': '8086',
+        'pci_device_id': '3b34',
+        'pci_device_name': '5 Series/3400 Series Chipset USB2 Enhanced Host Controller',
+        'pci_subvendor_name': 'Dell',
+        'pci_subvendor_id': '1028',
+        'pci_subdevice_name': 'Device',
+        'pci_subdevice_id': '02a3',
+    }
+
 class TestMultiDeviceNNMMParse(unittest.TestCase):
 
     SAMPLE_FILE = '%s/lspci-nnmm' % DATA_DIR
