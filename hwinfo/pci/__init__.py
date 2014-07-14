@@ -68,3 +68,17 @@ class PCIDevice(object):
             return "%s %s (%s %s)" % (self.get_subvendor_name(), self.get_subdevice_name(), self.get_vendor_name(), self.get_device_name())
         else:
             return "%s %s" % (self.get_vendor_name(), self.get_device_name())
+
+    def get_rec(self):
+        rec = {}
+        rec['vendor_name'] = self.get_vendor_name()
+        rec['device_name'] = self.get_device_name()
+        rec['vendor_id'] = self.get_vendor_id()
+        rec['device_id'] = self.get_device_id()
+        rec['class'] = self.get_pci_class()
+        rec['subvendor_name'] = self.get_subvendor_name()
+        rec['subdevice_name'] = self.get_subdevice_name()
+        rec['subvendor_id'] = self.get_subvendor_id()
+        rec['subdevice_id'] = self.get_subdevice_id()
+
+        return rec

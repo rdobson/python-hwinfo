@@ -200,6 +200,61 @@ class IntelUSBControllerDeviceParse(TestSingleDeviceNNMMParse):
         'pci_subdevice_id': '02a3',
     }
 
+class EmulexNicDeviceParse(TestSingleDeviceNNMMParse):
+
+    SAMPLE_DATA = '0c:00.0 "Ethernet controller [0200]" "Emulex Corporation [19a2]" "OneConnect 10Gb NIC (be3) [0710]" -r02 "Emulex Corporation [10df]" "Device [e70b]"'
+
+    DEVICE_REC = {
+        'pci_device_bus_id': '0c:00.0',
+        'pci_device_class': '0200',
+        'pci_device_class_name': 'Ethernet controller',
+        'pci_vendor_name': 'Emulex Corporation',
+        'pci_vendor_id': '19a2',
+        'pci_device_id': '0710',
+        'pci_device_name': 'OneConnect 10Gb NIC (be3)',
+        'pci_subvendor_name': 'Emulex Corporation',
+        'pci_subvendor_id': '10df',
+        'pci_subdevice_name': 'Device',
+        'pci_subdevice_id': 'e70b',
+    }
+
+class LsiSASDeviceParse(TestSingleDeviceNNMMParse):
+
+    SAMPLE_DATA = '06:00.0 "Serial Attached SCSI controller [0107]" "LSI Logic / Symbios Logic [1000]" "SAS2004 PCI-Express Fusion-MPT SAS-2 [Spitfire] [0070]" -r03 "IBM [1014]" "Device [03f8]"'
+
+    DEVICE_REC = {
+        'pci_device_bus_id': '06:00.0',
+        'pci_device_class': '0107',
+        'pci_device_class_name': 'Serial Attached SCSI controller',
+        'pci_vendor_name': 'LSI Logic / Symbios Logic',
+        'pci_vendor_id': '1000',
+        'pci_device_id': '0070',
+        'pci_device_name': 'SAS2004 PCI-Express Fusion-MPT SAS-2 [Spitfire]',
+        'pci_subvendor_name': 'IBM',
+        'pci_subvendor_id': '1014',
+        'pci_subdevice_name': 'Device',
+        'pci_subdevice_id': '03f8',
+    }
+
+class BroadcomNetDeviceParse(TestSingleDeviceNNMMParse):
+
+    SAMPLE_DATA = '01:00.0 "Ethernet controller [0200]" "Broadcom Corporation [14e4]" "NetXtreme BCM5720 Gigabit Ethernet PCIe [165f]" "Dell [1028]" "Device [1f5b]"'
+
+    DEVICE_REC = {
+        'pci_device_bus_id': '01:00.0',
+        'pci_device_class': '0200',
+        'pci_device_class_name': 'Ethernet controller',
+        'pci_vendor_name': 'Broadcom Corporation',
+        'pci_vendor_id': '14e4',
+        'pci_device_id': '165f',
+        'pci_device_name': 'NetXtreme BCM5720 Gigabit Ethernet PCIe',
+        'pci_subvendor_name': 'Dell',
+        'pci_subvendor_id': '1028',
+        'pci_subdevice_name': 'Device',
+        'pci_subdevice_id': '1f5b',
+    }
+
+
 class TestMultiDeviceNNMMParse(unittest.TestCase):
 
     SAMPLE_FILE = '%s/lspci-nnmm' % DATA_DIR

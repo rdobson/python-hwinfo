@@ -40,7 +40,7 @@ class LspciNParser(CommandParser):
     ]
 
 
-LABEL_REGEX = r'[\w+\ \.\-\/]+'
+LABEL_REGEX = r'[\w+\ \.\-\/\[\]\(\)]+'
 CODE_REGEX = r'[0-9a-fA-F]{4}'
 
 class LspciNNMMParser(CommandParser):
@@ -51,7 +51,7 @@ class LspciNNMMParser(CommandParser):
     ITEM_REGEXS = [
         r'(?P<pci_device_bus_id>([0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]))\ "(?P<pci_device_class_name>' + LABEL_REGEX + r')\ \[(?P<pci_device_class>' + CODE_REGEX + r')\]"' \
         + r'\ "(?P<pci_vendor_name>' + LABEL_REGEX + r')\ \[(?P<pci_vendor_id>' + CODE_REGEX + r')\]"\ "(?P<pci_device_name>' + LABEL_REGEX + r')\ \[(?P<pci_device_id>' + CODE_REGEX + r')\]"' \
-        + r'\ .*\ "((?P<pci_subvendor_name>' + LABEL_REGEX + r')\ \[(?P<pci_subvendor_id>' + CODE_REGEX + r')\])*"\ "((?P<pci_subdevice_name>' + LABEL_REGEX + r')\ \[(?P<pci_subdevice_id>' + CODE_REGEX + r')\])*',
+        + r'\ .*\"((?P<pci_subvendor_name>' + LABEL_REGEX + r')\ \[(?P<pci_subvendor_id>' + CODE_REGEX + r')\])*"\ "((?P<pci_subdevice_name>' + LABEL_REGEX + r')\ \[(?P<pci_subdevice_id>' + CODE_REGEX + r')\])*',
     ]
 
     ITEM_SEPERATOR = "\n"
