@@ -36,7 +36,7 @@ class TestPCIDeviceObject(unittest.TestCase):
 
     def test_get_subdevice_name(self):
         name = self.device.get_subdevice_name()
-        self.assertEqual(name, 'unknown [02a3]')
+        self.assertEqual(name, '[Device 02a3]')
 
     def test_get_subvendor_name(self):
         name = self.device.get_subvendor_name()
@@ -63,4 +63,4 @@ class TestPCIDeviceObject(unittest.TestCase):
 
     def test_get_device_info(self):
         info = self.device.get_info()
-        self.assertEqual(info, 'Dell unknown [02a3] (Broadcom Corporation NetXtreme II BCM5716 Gigabit Ethernet)')
+        self.assertEqual(info, 'Dell [Device 02a3] (Broadcom Corporation NetXtreme II BCM5716 Gigabit Ethernet)')

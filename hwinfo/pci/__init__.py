@@ -16,7 +16,7 @@ class PCIDevice(object):
         if name == 'Device':
             # If the input has come from lspci, this is the value for
             # not being able to find a key in the pciids db.
-            return 'unknown [%s]' % self.get_device_id()
+            return '[Device %s]' % self.get_device_id()
         else:
             return name
 
@@ -35,7 +35,7 @@ class PCIDevice(object):
         if name == 'Device':
             # If the input has come from lspci, this is the value for
             # not being able to find a key in the pciids db.
-            return 'unknown [%s]' % self.get_subdevice_id()
+            return '[Device %s]' % self.get_subdevice_id()
         else:
             return name
 
@@ -57,7 +57,7 @@ class PCIDevice(object):
         )
 
     def is_subdevice(self):
-        return 'pci_subvendor_id' in self.rec and 'pci_subdevice_id' in self.rec
+        return self.lookup_value('pci_subvendor_id') and self.lookup_value('pci_subdevice_id')
 
     def get_info(self):
 
