@@ -6,4 +6,13 @@ setup(
     name='python-hwinfo',
     author='Rob Dobson',
     packages=find_packages(),
+    entry_points = {
+        'console_scripts': [
+            'hwinfo = hwinfo.tools.inspector:main',
+        ]
+    },
+    install_requires = [
+        'paramiko',
+        'prettytable',
+    ],
     )
