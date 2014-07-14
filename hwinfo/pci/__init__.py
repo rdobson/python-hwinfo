@@ -56,6 +56,9 @@ class PCIDevice(object):
             self.lookup_value('pci_subdevice_id'),
         )
 
+    def get_pci_class(self):
+        return self.lookup_value('pci_device_class')
+
     def is_subdevice(self):
         return self.lookup_value('pci_subvendor_id') and self.lookup_value('pci_subdevice_id')
 

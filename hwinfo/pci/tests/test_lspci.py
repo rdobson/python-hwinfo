@@ -12,7 +12,8 @@ class TestSingleDeviceVVParse(unittest.TestCase):
 
     DEVICE_REC = {
         'pci_device_string': 'Broadcom Corporation NetXtreme II BCM5716 Gigabit Ethernet (rev 20)',
-        'pci_device_type': 'Ethernet controller',
+        'pci_device_class': '0200',
+        'pci_device_class_name': 'Ethernet controller',
         'pci_device_bus_id': '02:00.0',
         'pci_device_sub_string': 'Dell Device 0488',
         'pci_device_vpd_product_name': 'Broadcom NetXtreme II Ethernet Controller',
@@ -36,9 +37,9 @@ class TestSingleDeviceVVParse(unittest.TestCase):
         rec = self.parser.parse_items().pop()
         self._assert_rec_key(rec, 'pci_device_bus_id')
 
-    def test_pci_device_type(self):
+    def test_pci_device_class_name(self):
         rec = self.parser.parse_items().pop()
-        self._assert_rec_key(rec, 'pci_device_type')
+        self._assert_rec_key(rec, 'pci_device_class_name')
 
     def test_pci_device_sub_string(self):
         rec = self.parser.parse_items().pop()
@@ -70,7 +71,7 @@ class TestSingleDeviceNParse(unittest.TestCase):
         'pci_device_bus_id': 'ff:10.5',
         'pci_vendor_id': '8086',
         'pci_device_id': '0eb5',
-        'pci_device_type_id': '0880',
+        'pci_device_class': '0880',
     }
 
     def setUp(self):
@@ -89,8 +90,8 @@ class TestSingleDeviceNParse(unittest.TestCase):
     def test_pci_device_id(self):
         self._assert_rec_key('pci_device_id')
 
-    def test_pci_device_type_id(self):
-        self._assert_rec_key('pci_device_type_id')
+    def test_pci_device_class(self):
+        self._assert_rec_key('pci_device_class')
 
 class TestMultiDeviceNParse(unittest.TestCase):
  
@@ -113,8 +114,8 @@ class TestSingleDeviceNNMMParse(unittest.TestCase):
 
     DEVICE_REC = {
         'pci_device_bus_id': '02:00.0',
-        'pci_device_type_id': '0200',
-        'pci_device_type_name': 'Ethernet controller',
+        'pci_device_class': '0200',
+        'pci_device_class_name': 'Ethernet controller',
         'pci_vendor_name': 'Broadcom Corporation',
         'pci_vendor_id': '14e4',
         'pci_device_id': '163b',
@@ -135,11 +136,11 @@ class TestSingleDeviceNNMMParse(unittest.TestCase):
     def test_pci_device_bus_id(self):
         self._assert_rec_key('pci_device_bus_id')
 
-    def test_pci_device_type_id(self):
-        self._assert_rec_key('pci_device_type_id')
+    def test_pci_device_class(self):
+        self._assert_rec_key('pci_device_class')
 
-    def test_pci_device_type_name(self):
-        self._assert_rec_key('pci_device_type_name')
+    def test_pci_device_class_name(self):
+        self._assert_rec_key('pci_device_class_name')
 
     def test_pci_vendor_name(self):
         self._assert_rec_key('pci_vendor_name')
@@ -168,8 +169,8 @@ class LsiDeviceParse(TestSingleDeviceNNMMParse):
 
     DEVICE_REC = {
         'pci_device_bus_id': '03:00.0',
-        'pci_device_type_id': '0100',
-        'pci_device_type_name': 'SCSI storage controller',
+        'pci_device_class': '0100',
+        'pci_device_class_name': 'SCSI storage controller',
         'pci_vendor_name': 'LSI Logic / Symbios Logic',
         'pci_vendor_id': '1000',
         'pci_device_id': '0058',
@@ -187,8 +188,8 @@ class IntelUSBControllerDeviceParse(TestSingleDeviceNNMMParse):
 
     DEVICE_REC = {
         'pci_device_bus_id': '00:1d.0',
-        'pci_device_type_id': '0c03',
-        'pci_device_type_name': 'USB controller',
+        'pci_device_class': '0c03',
+        'pci_device_class_name': 'USB controller',
         'pci_vendor_name': 'Intel Corporation',
         'pci_vendor_id': '8086',
         'pci_device_id': '3b34',

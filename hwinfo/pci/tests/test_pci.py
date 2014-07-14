@@ -7,8 +7,8 @@ class TestPCIDeviceObject(unittest.TestCase):
 
     DEVICE_REC = {
         'pci_device_bus_id': '02:00.0',
-        'pci_device_type_id': '0200',
-        'pci_device_type_name': 'Ethernet controller',
+        'pci_device_class': '0200',
+        'pci_device_class_name': 'Ethernet controller',
         'pci_vendor_name': 'Broadcom Corporation',
         'pci_vendor_id': '14e4',
         'pci_device_id': '163b',
@@ -64,3 +64,7 @@ class TestPCIDeviceObject(unittest.TestCase):
     def test_get_device_info(self):
         info = self.device.get_info()
         self.assertEqual(info, 'Dell [Device 02a3] (Broadcom Corporation NetXtreme II BCM5716 Gigabit Ethernet)')
+
+    def test_get_device_class(self):
+        pci_class = self.device.get_pci_class()
+        self.assertEqual(pci_class, '0200')
