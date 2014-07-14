@@ -47,7 +47,7 @@ class LspciNNMMParser(CommandParser):
     ITEM_REGEXS = [
         r'(?P<pci_device_bus_id>([0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]))\ "(?P<pci_device_type_name>[\w+\ \.\-]+)\ \[(?P<pci_device_type_id>[0-9a-fA-F]{4})\]"' \
         + r'\ "(?P<pci_vendor_name>[\w+\ \.\-]+)\ \[(?P<pci_vendor_id>[0-9a-fA-F]{4})\]"\ "(?P<pci_device_name>[\w+\ \.\-]+)\ \[(?P<pci_device_id>[0-9a-fA-F]{4})\]"' \
-        + r'\ .*\ "(?P<pci_subvendor_name>[\w+\ \.\-]+)\ \[(?P<pci_subvendor_id>[0-9a-fA-F]{4})\]"\ "(?P<pci_subdevice_name>[\w+\ \.\-]+)\ \[(?P<pci_subdevice_id>[0-9a-fA-F]{4})\]'
+        + r'\ .*\ "((?P<pci_subvendor_name>[\w+\ \.\-]+)\ \[(?P<pci_subvendor_id>[0-9a-fA-F]{4})\])*"\ "((?P<pci_subdevice_name>[\w+\ \.\-]+)\ \[(?P<pci_subdevice_id>[0-9a-fA-F]{4})\])*',
     ]
 
     ITEM_SEPERATOR = "\n"
