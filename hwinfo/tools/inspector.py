@@ -10,6 +10,7 @@ from hwinfo.pci import PCIDevice
 from hwinfo.pci.lspci import *
 
 from hwinfo.host import dmidecode
+from hwinfo.host import cpuinfo
 
 def remote_command(host, username, password, cmd):
     client = paramiko.SSHClient()
@@ -54,6 +55,9 @@ class Host(object):
     def get_dmidecode_data(self):
         return self.exec_command(['dmidecode'])
 
+    def get_cpuinfo_data(self):
+        return self.exec_command(['cat /proc/cpuinfo'])
+
     def get_pci_devices(self):
         data = self.get_lspci_data()
         parser = LspciNNMMParser(data)
@@ -65,6 +69,11 @@ class Host(object):
         parser = dmidecode.DmidecodeParser(data)
         rec = parser.parse()
         return rec
+
+    def get_cpu_info(self):
+        data = self.get_cpuinfo_data()
+        parser = cpuinfo.CPUInfoParser(data)
+        return parser.parse_items()
 
 def search_for_file(dirname, filename):
     for root, _, files in os.walk(dirname):
@@ -92,6 +101,9 @@ class HostFromLogs(Host):
 
     def get_dmidecode_data(self):
         return self._load_from_file('dmidecode.out')
+
+    def get_cpuinfo_data(self):
+        return self._load_from_file('cpuinfo')
 
 def pci_filter(devices, types):
     res = []
@@ -122,6 +134,13 @@ def rec_to_table(rec):
         table.add_row([k, v])
     return table
 
+def tabulate_recs(recs, header):
+    table = PrettyTable(header)
+    for rec in recs:
+        vls = [rec[k] for k in header]
+        table.add_row(vls)
+    return table
+
 def tabulate_pci_recs(recs):
     header = [
         'vendor_name',
@@ -133,18 +152,26 @@ def tabulate_pci_recs(recs):
         'subdevice_name',
         'subdevice_id',
     ]
-    table = PrettyTable(header)
-    for rec in recs:
-        vls = [rec[k] for k in header]
-        table.add_row(vls)
-    return table
+    return tabulate_recs(recs, header)
+
+def tabulate_cpu_recs(recs):
+    header = [
+        'processor',
+        'vendor_id',
+        'cpu_family',
+        'model',
+        'stepping',
+        'model_name',
+        'cpu_mhz',
+    ]
+    return tabulate_recs(recs, header)
 
 def main():
     """Entry Point"""
 
     parser = ArgumentParser(prog="hwinfo")
 
-    filter_choices = ['bios', 'nic', 'storage', 'gpu']
+    filter_choices = ['bios', 'nic', 'storage', 'gpu', 'cpu']
     parser.add_argument("-f", "--filter", choices=filter_choices, help="Query a specific class.")
     parser.add_argument("-m", "--machine", default='localhost', help="Remote host address.")
     parser.add_argument("-u", "--username", help="Username for remote host.")
@@ -171,6 +198,12 @@ def main():
         print "Bios Info:"
         print ""
         print rec_to_table(host.get_info())
+        print ""
+
+    if 'cpu' in options:
+        print "CPU Info:"
+        print ""
+        print tabulate_cpu_recs(host.get_cpu_info())
         print ""
 
     if 'nic' in options:
