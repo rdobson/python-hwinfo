@@ -3,10 +3,13 @@
 from argparse import ArgumentParser
 from prettytable import PrettyTable
 import paramiko
+import subprocess
+import os
 
 from hwinfo.pci import PCIDevice
 from hwinfo.pci.lspci import *
-from hwinfo.host.dmidecode import *
+
+from hwinfo.host import dmidecode
 
 def remote_command(host, username, password, cmd):
     client = paramiko.SSHClient()
@@ -18,12 +21,19 @@ def remote_command(host, username, password, cmd):
     output = stdout.readlines()
     error = stderr.readlines()
     if error:
-        print "stderr: %s" % error
+        raise Exception("stderr: %s" % error)
     client.close()
     return ''.join(output)
 
 def local_command(cmd):
-    return cmd
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    if process.returncode == 0:
+        return str(stdout).strip()
+    else:
+        print "RC: %s" % process.returncode
+        print stdout
+        raise Exception("stderr: %s" % str(stderr))
 
 class Host(object):
 
@@ -38,17 +48,50 @@ class Host(object):
         else:
             return remote_command(self.host, self.username, self.password, cmd)
 
+    def get_lspci_data(self):
+        return self.exec_command(['lspci', '-nnmm'])
+
+    def get_dmidecode_data(self):
+        return self.exec_command(['dmidecode'])
+
     def get_pci_devices(self):
-        data = self.exec_command(['lspci', '-nnmm'])
+        data = self.get_lspci_data()
         parser = LspciNNMMParser(data)
         devices = parser.parse_items()
         return [PCIDevice(device) for device in devices]
 
     def get_info(self):
-        data = self.exec_command(['dmidecode'])
-        parser = DmidecodeParser(data)
+        data = self.get_dmidecode_data()
+        parser = dmidecode.DmidecodeParser(data)
         rec = parser.parse()
         return rec
+
+def search_for_file(dirname, filename):
+    for root, _, files in os.walk(dirname):
+        if filename in files:
+            return os.path.join(root, filename)
+    raise Exception("Could not find '%s' in directory '%s'" % (filename, dirname))
+
+def read_from_file(filename):
+    fh = open(filename, 'r')
+    data = fh.read()
+    fh.close()
+    return data
+
+class HostFromLogs(Host):
+
+    def __init__(self, dirname):
+        self.dirname = dirname
+
+    def _load_from_file(self, filename):
+        filename = search_for_file(self.dirname, filename)
+        return read_from_file(filename)
+
+    def get_lspci_data(self):
+        return self._load_from_file('lspci-nnm.out')
+
+    def get_dmidecode_data(self):
+        return self._load_from_file('dmidecode.out')
 
 def pci_filter(devices, types):
     res = []
@@ -70,19 +113,6 @@ def pci_filter_for_storage(devices):
 def pci_filter_for_gpu(devices):
     gpu_types = ['03']
     return pci_filter(devices, gpu_types)
-
-def print_lines(lines):
-    max_len = 0
-    output = []
-    for line in lines:
-        output.append(line)
-        if len(line) > max_len:
-            max_len = len(line)
-    print ""
-    print "-" * max_len
-    print '\n'.join(output)
-    print "-" * max_len
-    print ""
 
 def rec_to_table(rec):
     table = PrettyTable(["Key", "Value"])
@@ -115,14 +145,18 @@ def main():
     parser = ArgumentParser(prog="hwinfo")
 
     filter_choices = ['bios', 'nic', 'storage', 'gpu']
-    parser.add_argument("-f", "--filter", choices=filter_choices)
-    parser.add_argument("-m", "--machine", default='localhost')
-    parser.add_argument("-u", "--username")
-    parser.add_argument("-p", "--password")
+    parser.add_argument("-f", "--filter", choices=filter_choices, help="Query a specific class.")
+    parser.add_argument("-m", "--machine", default='localhost', help="Remote host address.")
+    parser.add_argument("-u", "--username", help="Username for remote host.")
+    parser.add_argument("-p", "--password", help="Password for remote host.")
+    parser.add_argument("-l", "--logs", help="Path to the directory with the logfiles.")
 
     args = parser.parse_args()
 
-    host = Host(args.machine, args.username, args.password)
+    if args.logs:
+        host = HostFromLogs(args.logs)
+    else:
+        host = Host(args.machine, args.username, args.password)
 
     options = []
 
