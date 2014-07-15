@@ -27,7 +27,8 @@ def remote_command(host, username, password, cmd):
     return ''.join(output)
 
 def local_command(cmd):
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    cmdstr = ' '.join(cmd)
+    process = subprocess.Popen(cmdstr, stdout=subprocess.PIPE, shell=True)
     stdout, stderr = process.communicate()
     if process.returncode == 0:
         return str(stdout).strip()
