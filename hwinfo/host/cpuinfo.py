@@ -6,6 +6,7 @@ REGEX_TEMPLATE = r'%s([\ \t])+\:\ (?P<%s>.*)'
 
 class CPUInfoParser(CommandParser):
 
+    ITEM_SEPERATOR = "\n\n"
 
     ITEM_REGEXS = [
         REGEX_TEMPLATE % ('processor', 'processor'),

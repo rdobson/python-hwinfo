@@ -56,7 +56,7 @@ power management:
         self.parser = CPUInfoParser(self.DATA.strip())
 
     def _assert_equal(self, key):
-        rec = self.parser.parse()
+        rec = self.parser.parse_items()[0]
         return self.assertEqual(rec[key], self.DATA_REC[key])
 
     def test_cpuinfo_processor(self):
@@ -112,3 +112,17 @@ power management:
 
     def test_address_sizes(self):
         return self._assert_equal('address_sizes')
+
+class CPUInfoMultipleParseTest(unittest.TestCase):
+
+    DATA_FILE = "%s/cpuinfo" % DATA_DIR
+
+    def setUp(self):
+        fh = open(self.DATA_FILE)
+        data = fh.read()
+        fh.close()
+        self.parser = CPUInfoParser(data)
+
+    def test_number_of_processors(self):
+        recs = self.parser.parse_items()
+        self.assertEqual(len(recs), 4)
