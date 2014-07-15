@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from prettytable import PrettyTable
 import paramiko
 import subprocess
+import os
 
 from hwinfo.pci import PCIDevice
 from hwinfo.pci.lspci import *
@@ -47,18 +48,50 @@ class Host(object):
         else:
             return remote_command(self.host, self.username, self.password, cmd)
 
+    def get_lspci_data(self):
+        return self.exec_command(['lspci', '-nnmm'])
+
+    def get_dmidecode_data(self):
+        return self.exec_command(['dmidecode'])
+
     def get_pci_devices(self):
-        data = self.exec_command(['lspci', '-nnmm'])
+        data = self.get_lspci_data()
         parser = LspciNNMMParser(data)
         devices = parser.parse_items()
         return [PCIDevice(device) for device in devices]
 
     def get_info(self):
-        data = self.exec_command(['dmidecode'])
+        data = self.get_dmidecode_data()
         parser = dmidecode.DmidecodeParser(data)
-        print "test : '%s'" % parser
         rec = parser.parse()
         return rec
+
+def search_for_file(dirname, filename):
+    for root, _, files in os.walk(dirname):
+        if filename in files:
+            return os.path.join(root, filename)
+    raise Exception("Could not find '%s' in directory '%s'" % (filename, dirname))
+
+def read_from_file(filename):
+    fh = open(filename, 'r')
+    data = fh.read()
+    fh.close()
+    return data
+
+class HostFromLogs(Host):
+
+    def __init__(self, dirname):
+        self.dirname = dirname
+
+    def _load_from_file(self, filename):
+        filename = search_for_file(self.dirname, filename)
+        return read_from_file(filename)
+
+    def get_lspci_data(self):
+        return self._load_from_file('lspci-nnm.out')
+
+    def get_dmidecode_data(self):
+        return self._load_from_file('dmidecode.out')
 
 def pci_filter(devices, types):
     res = []
@@ -112,14 +145,18 @@ def main():
     parser = ArgumentParser(prog="hwinfo")
 
     filter_choices = ['bios', 'nic', 'storage', 'gpu']
-    parser.add_argument("-f", "--filter", choices=filter_choices)
-    parser.add_argument("-m", "--machine", default='localhost')
-    parser.add_argument("-u", "--username")
-    parser.add_argument("-p", "--password")
+    parser.add_argument("-f", "--filter", choices=filter_choices, help="Query a specific class.")
+    parser.add_argument("-m", "--machine", default='localhost', help="Remote host address.")
+    parser.add_argument("-u", "--username", help="Username for remote host.")
+    parser.add_argument("-p", "--password", help="Password for remote host.")
+    parser.add_argument("-l", "--logs", help="Path to the directory with the logfiles.")
 
     args = parser.parse_args()
 
-    host = Host(args.machine, args.username, args.password)
+    if args.logs:
+        host = HostFromLogs(args.logs)
+    else:
+        host = Host(args.machine, args.username, args.password)
 
     options = []
 
