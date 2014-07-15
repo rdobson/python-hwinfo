@@ -255,6 +255,24 @@ class BroadcomNetDeviceParse(TestSingleDeviceNNMMParse):
     }
 
 
+class IntelNetDeviceParser(TestSingleDeviceNNMMParse):
+
+    SAMPLE_DATA = '00:19.0 "Ethernet controller [0200]" "Intel Corporation [8086]" "82579LM Gigabit Network Connection [1502]" -r06 "Dell [1028]" "Device [05d2]"'
+
+    DEVICE_REC = {
+        'pci_device_bus_id': '00:19.0',
+        'pci_device_class': '0200',
+        'pci_device_class_name': 'Ethernet controller',
+        'pci_vendor_name': 'Intel Corporation',
+        'pci_vendor_id': '8086',
+        'pci_device_id': '1502',
+        'pci_device_name': '82579LM Gigabit Network Connection',
+        'pci_subvendor_name': 'Dell',
+        'pci_subvendor_id': '1028',
+        'pci_subdevice_name': 'Device',
+        'pci_subdevice_id': '05d2',
+    }
+
 class TestMultiDeviceNNMMParse(unittest.TestCase):
 
     SAMPLE_FILE = '%s/lspci-nnmm' % DATA_DIR
