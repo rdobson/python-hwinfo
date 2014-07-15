@@ -3,10 +3,12 @@
 from argparse import ArgumentParser
 from prettytable import PrettyTable
 import paramiko
+import subprocess
 
 from hwinfo.pci import PCIDevice
 from hwinfo.pci.lspci import *
-from hwinfo.host.dmidecode import *
+
+from hwinfo.host import dmidecode
 
 def remote_command(host, username, password, cmd):
     client = paramiko.SSHClient()
@@ -18,12 +20,19 @@ def remote_command(host, username, password, cmd):
     output = stdout.readlines()
     error = stderr.readlines()
     if error:
-        print "stderr: %s" % error
+        raise Exception("stderr: %s" % error)
     client.close()
     return ''.join(output)
 
 def local_command(cmd):
-    return cmd
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    if process.returncode == 0:
+        return str(stdout).strip()
+    else:
+        print "RC: %s" % process.returncode
+        print stdout
+        raise Exception("stderr: %s" % str(stderr))
 
 class Host(object):
 
@@ -46,7 +55,8 @@ class Host(object):
 
     def get_info(self):
         data = self.exec_command(['dmidecode'])
-        parser = DmidecodeParser(data)
+        parser = dmidecode.DmidecodeParser(data)
+        print "test : '%s'" % parser
         rec = parser.parse()
         return rec
 
@@ -70,19 +80,6 @@ def pci_filter_for_storage(devices):
 def pci_filter_for_gpu(devices):
     gpu_types = ['03']
     return pci_filter(devices, gpu_types)
-
-def print_lines(lines):
-    max_len = 0
-    output = []
-    for line in lines:
-        output.append(line)
-        if len(line) > max_len:
-            max_len = len(line)
-    print ""
-    print "-" * max_len
-    print '\n'.join(output)
-    print "-" * max_len
-    print ""
 
 def rec_to_table(rec):
     table = PrettyTable(["Key", "Value"])
