@@ -142,4 +142,117 @@ class TabulateTests(unittest.TestCase):
         ]
         mock_table.add_row.assert_has_calls(expected_calls, any_order=True)
 
+class CombineRecsTests(unittest.TestCase):
+
+
+    def _validate_rec(self, rec, key, value):
+        self.assertEqual(rec[key], value)
+
+    def test_combine_two_recs(self):
+        recs = [
+            {
+                'name':'rec1',
+                'valuea': '10',
+                'valueb': '11',
+                'valuec': '12',
+            },
+            {
+                'name': 'rec1',
+                'valued': '5',
+                'valuee': '8',
+            },
+        ]
+
+        combined_recs = inspector.combine_recs(recs, 'name')
+        self.assertEqual(len(combined_recs), 1)
+        rec = combined_recs[0]
+        self._validate_rec(rec, 'valuea', '10')
+        self._validate_rec(rec, 'valueb', '11')
+        self._validate_rec(rec, 'valuec', '12')
+        self._validate_rec(rec, 'valued', '5')
+        self._validate_rec(rec, 'valuee', '8')
+
+    def test_combine_three_recs(self):
+        recs = [
+            {
+                'name':'rec1',
+                'valuea': '10',
+                'valueb': '11',
+                'valuec': '12',
+            },
+            {
+                'name': 'rec1',
+                'valued': '5',
+                'valuee': '8',
+            },
+            {
+                'name': 'rec1',
+                'valuef': '1',
+                'valueg': '2',
+            },
+        ]
+
+        combined_recs = inspector.combine_recs(recs, 'name')
+        self.assertEqual(len(combined_recs), 1)
+        rec = combined_recs[0]
+        self._validate_rec(rec, 'valuea', '10')
+        self._validate_rec(rec, 'valueb', '11')
+        self._validate_rec(rec, 'valuec', '12')
+        self._validate_rec(rec, 'valued', '5')
+        self._validate_rec(rec, 'valuee', '8')
+        self._validate_rec(rec, 'valuef', '1')
+        self._validate_rec(rec, 'valueg', '2')
+
+    def test_combine_three_recs_to_two(self):
+        recs = [
+            {
+                'name':'rec1',
+                'valuea': '10',
+                'valueb': '11',
+                'valuec': '12',
+            },
+            {
+                'name': 'rec2',
+                'valued': '5',
+                'valuee': '8',
+            },
+            {
+                'name': 'rec1',
+                'valuef': '1',
+                'valueg': '2',
+            },
+        ]
+
+        combined_recs = inspector.combine_recs(recs, 'name')
+        self.assertEqual(len(combined_recs), 2)
+        for rec in combined_recs:
+            if rec['name'] == 'rec1':
+                self._validate_rec(rec, 'valuea', '10')
+                self._validate_rec(rec, 'valueb', '11')
+                self._validate_rec(rec, 'valuec', '12')
+                self._validate_rec(rec, 'valuef', '1')
+                self._validate_rec(rec, 'valueg', '2')
+            elif rec['name'] == 'rec2':
+                self._validate_rec(rec, 'valued', '5')
+                self._validate_rec(rec, 'valuee', '8')
+            else:
+                raise Exception("Unexpected rec: %s" % rec)
+
+    def test_colliding_values(self):
+        recs = [
+            {
+                'name':'rec1',
+                'valuea': '10',
+                'valueb': '11',
+                'valuec': '12',
+            },
+            {
+                'name': 'rec1',
+                'valuea': '5',
+                'valuee': '8',
+            },
+        ]
+        with self.assertRaises(Exception) as context:
+            combined_recs = inspector.combine_recs(recs, 'name')
+        self.assertEqual(context.exception.message, "Mis-match for key 'valuea'")
 

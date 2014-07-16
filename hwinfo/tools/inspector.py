@@ -77,17 +77,39 @@ class Host(object):
         parser = cpuinfo.CPUInfoParser(data)
         return parser.parse_items()
 
+class FileNotFound(Exception):
+    pass
+
 def search_for_file(dirname, filename):
     for root, _, files in os.walk(dirname):
         if filename in files:
             return os.path.join(root, filename)
-    raise Exception("Could not find '%s' in directory '%s'" % (filename, dirname))
+    raise FileNotFound("Could not find '%s' in directory '%s'" % (filename, dirname))
 
 def read_from_file(filename):
     fh = open(filename, 'r')
     data = fh.read()
     fh.close()
     return data
+
+def parse_data(parser, data):
+    p = parser(data)
+    return p.parse_items()
+
+def combine_recs(rec_list, key):
+    """Use a common key to combine a list of recs"""
+    final_recs = {}
+    for rec in rec_list:
+        rec_key = rec[key]
+        if rec_key in final_recs:
+            for k, v in rec.iteritems():
+                if k in final_recs[rec_key] and final_recs[rec_key][k] != v:
+                    raise Exception("Mis-match for key '%s'" % k)
+                final_recs[rec_key][k] = v
+        else:
+            final_recs[rec_key] = rec
+    return final_recs.values()
+
 
 class HostFromLogs(Host):
 
@@ -106,6 +128,20 @@ class HostFromLogs(Host):
 
     def get_cpuinfo_data(self):
         return self._load_from_file('cpuinfo')
+
+    def get_pci_devices(self):
+        try:
+            devs = super(HostFromLogs, self).get_pci_devices()
+            return devs
+        except FileNotFound:
+            # Fall back to looking for the file lspci-vv.out
+            print "***lspci-nnm.out found. Falling back to looking for lspci-vv.out and lspci-n.out.***"
+            lspci_vv_recs = parse_data(LspciVVParser, self._load_from_file('lspci-vv.out'))
+            lspci_n_recs = parse_data(LspciNParser, self._load_from_file('lspci-n.out'))
+            all_recs = lspci_vv_recs + lspci_n_recs
+            recs = combine_recs(all_recs, 'pci_device_bus_id')
+            return [PCIDevice(rec) for rec in recs]
+
 
 def pci_filter(devices, types):
     res = []
