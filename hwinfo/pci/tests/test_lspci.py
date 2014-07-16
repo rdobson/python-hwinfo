@@ -62,6 +62,13 @@ class TestMultiDeviceVVParse(unittest.TestCase):
     def test_parse_all_devices(self):
         recs = self.parser.parse_items()
         self.assertEqual(len(recs), 58)
+        found = False
+        for rec in recs:
+            print rec
+            if rec['pci_device_bus_id'] == '02:00.0':
+                self.assertEqual(rec['pci_device_class_name'], 'VGA compatible controller')
+                found = True
+        self.assertEqual(found, True)
 
 class TestSingleDeviceNParse(unittest.TestCase):
 

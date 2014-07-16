@@ -5,6 +5,7 @@ from prettytable import PrettyTable
 import paramiko
 import subprocess
 import os
+import sys
 
 from hwinfo.pci import PCIDevice
 from hwinfo.pci.lspci import *
@@ -76,17 +77,39 @@ class Host(object):
         parser = cpuinfo.CPUInfoParser(data)
         return parser.parse_items()
 
+class FileNotFound(Exception):
+    pass
+
 def search_for_file(dirname, filename):
     for root, _, files in os.walk(dirname):
         if filename in files:
             return os.path.join(root, filename)
-    raise Exception("Could not find '%s' in directory '%s'" % (filename, dirname))
+    raise FileNotFound("Could not find '%s' in directory '%s'" % (filename, dirname))
 
 def read_from_file(filename):
     fh = open(filename, 'r')
     data = fh.read()
     fh.close()
     return data
+
+def parse_data(parser, data):
+    p = parser(data)
+    return p.parse_items()
+
+def combine_recs(rec_list, key):
+    """Use a common key to combine a list of recs"""
+    final_recs = {}
+    for rec in rec_list:
+        rec_key = rec[key]
+        if rec_key in final_recs:
+            for k, v in rec.iteritems():
+                if k in final_recs[rec_key] and final_recs[rec_key][k] != v:
+                    raise Exception("Mis-match for key '%s'" % k)
+                final_recs[rec_key][k] = v
+        else:
+            final_recs[rec_key] = rec
+    return final_recs.values()
+
 
 class HostFromLogs(Host):
 
@@ -105,6 +128,20 @@ class HostFromLogs(Host):
 
     def get_cpuinfo_data(self):
         return self._load_from_file('cpuinfo')
+
+    def get_pci_devices(self):
+        try:
+            devs = super(HostFromLogs, self).get_pci_devices()
+            return devs
+        except FileNotFound:
+            # Fall back to looking for the file lspci-vv.out
+            print "***lspci-nnm.out found. Falling back to looking for lspci-vv.out and lspci-n.out.***"
+            lspci_vv_recs = parse_data(LspciVVParser, self._load_from_file('lspci-vv.out'))
+            lspci_n_recs = parse_data(LspciNParser, self._load_from_file('lspci-n.out'))
+            all_recs = lspci_vv_recs + lspci_n_recs
+            recs = combine_recs(all_recs, 'pci_device_bus_id')
+            return [PCIDevice(rec) for rec in recs]
+
 
 def pci_filter(devices, types):
     res = []
@@ -167,6 +204,12 @@ def tabulate_cpu_recs(recs):
     ]
     return tabulate_recs(recs, header)
 
+def print_unit(title, content):
+    print "%s" % title
+    print ""
+    print content
+    print ""
+
 def main():
     """Entry Point"""
 
@@ -184,6 +227,10 @@ def main():
     if args.logs:
         host = HostFromLogs(args.logs)
     else:
+        if args.machine and not args.username or not args.password:
+            print "Error: you must specify a username and password to query a remote machine."
+            sys.exit(1)
+
         host = Host(args.machine, args.username, args.password)
 
     options = []
@@ -196,35 +243,20 @@ def main():
         options = filter_choices
 
     if 'bios' in options:
-        print "Bios Info:"
-        print ""
-        print rec_to_table(host.get_info())
-        print ""
+        print_unit("Bios Info:", rec_to_table(host.get_info()))
 
     if 'cpu' in options:
-        print "CPU Info:"
-        print ""
-        print tabulate_cpu_recs(host.get_cpu_info())
-        print ""
+        print_unit("CPU Info:", tabulate_cpu_recs(host.get_cpu_info()))
 
     if 'nic' in options:
         devices = pci_filter_for_nics(host.get_pci_devices())
-        print "Ethernet Controller Info:"
-        print ""
-        print tabulate_pci_recs([dev.get_rec() for dev in devices])
-        print ""
+        print_unit("Ethernet Controller Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
 
     if 'storage' in options:
         devices = pci_filter_for_storage(host.get_pci_devices())
-        print "Storage Controller Info:"
-        print ""
-        print tabulate_pci_recs([dev.get_rec() for dev in devices])
-        print ""
+        print_unit("Storage Controller Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
 
     if 'gpu' in options:
         devices = pci_filter_for_gpu(host.get_pci_devices())
         if devices:
-            print "GPU Info:"
-            print ""
-            print tabulate_pci_recs([dev.get_rec() for dev in devices])
-            print ""
+            print_unit("GPU Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
