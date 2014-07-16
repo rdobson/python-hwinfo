@@ -5,6 +5,7 @@ from prettytable import PrettyTable
 import paramiko
 import subprocess
 import os
+import sys
 
 from hwinfo.pci import PCIDevice
 from hwinfo.pci.lspci import *
@@ -184,6 +185,11 @@ def main():
     if args.logs:
         host = HostFromLogs(args.logs)
     else:
+        if args.machine:
+            if not args.username or not args.password:
+                print "Error: you must specify a username and password to query a remote machine."
+                sys.exit(1)
+
         host = Host(args.machine, args.username, args.password)
 
     options = []
