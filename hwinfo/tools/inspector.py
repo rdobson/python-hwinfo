@@ -168,6 +168,12 @@ def tabulate_cpu_recs(recs):
     ]
     return tabulate_recs(recs, header)
 
+def print_unit(title, content):
+    print "%s" % title
+    print ""
+    print content
+    print ""
+
 def main():
     """Entry Point"""
 
@@ -185,10 +191,9 @@ def main():
     if args.logs:
         host = HostFromLogs(args.logs)
     else:
-        if args.machine:
-            if not args.username or not args.password:
-                print "Error: you must specify a username and password to query a remote machine."
-                sys.exit(1)
+        if args.machine and not args.username or not args.password:
+            print "Error: you must specify a username and password to query a remote machine."
+            sys.exit(1)
 
         host = Host(args.machine, args.username, args.password)
 
@@ -202,35 +207,20 @@ def main():
         options = filter_choices
 
     if 'bios' in options:
-        print "Bios Info:"
-        print ""
-        print rec_to_table(host.get_info())
-        print ""
+        print_unit("Bios Info:", rec_to_table(host.get_info()))
 
     if 'cpu' in options:
-        print "CPU Info:"
-        print ""
-        print tabulate_cpu_recs(host.get_cpu_info())
-        print ""
+        print_unit("CPU Info:", tabulate_cpu_recs(host.get_cpu_info()))
 
     if 'nic' in options:
         devices = pci_filter_for_nics(host.get_pci_devices())
-        print "Ethernet Controller Info:"
-        print ""
-        print tabulate_pci_recs([dev.get_rec() for dev in devices])
-        print ""
+        print_unit("Ethernet Controller Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
 
     if 'storage' in options:
         devices = pci_filter_for_storage(host.get_pci_devices())
-        print "Storage Controller Info:"
-        print ""
-        print tabulate_pci_recs([dev.get_rec() for dev in devices])
-        print ""
+        print_unit("Storage Controller Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
 
     if 'gpu' in options:
         devices = pci_filter_for_gpu(host.get_pci_devices())
         if devices:
-            print "GPU Info:"
-            print ""
-            print tabulate_pci_recs([dev.get_rec() for dev in devices])
-            print ""
+            print_unit("GPU Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
