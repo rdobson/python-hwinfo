@@ -223,37 +223,14 @@ def print_unit(title, content):
     print content
     print ""
 
-def main():
-    """Entry Point"""
 
-    parser = ArgumentParser(prog="hwinfo")
-
-    filter_choices = ['bios', 'nic', 'storage', 'gpu', 'cpu']
-    parser.add_argument("-f", "--filter", choices=filter_choices, help="Query a specific class.")
-    parser.add_argument("-m", "--machine", default='localhost', help="Remote host address.")
-    parser.add_argument("-u", "--username", help="Username for remote host.")
-    parser.add_argument("-p", "--password", help="Password for remote host.")
-    parser.add_argument("-l", "--logs", help="Path to the directory with the logfiles.")
-
-    args = parser.parse_args()
-
-    if args.logs:
-        host = HostFromLogs(args.logs)
-    else:
-        if args.machine and not args.username or not args.password:
+def validate_args(args):
+    if args.machine != 'localhost':
+        if not args.username or not args.password:
             print "Error: you must specify a username and password to query a remote machine."
             sys.exit(1)
 
-        host = Host(args.machine, args.username, args.password)
-
-    options = []
-
-    if args.filter:
-        filter_args = args.filter.split(',')
-        for arg in filter_args:
-            options.append(arg.strip())
-    else:
-        options = filter_choices
+def print_system_info(host, options):
 
     if 'bios' in options:
         print_unit("Bios Info:", rec_to_table(host.get_info()))
@@ -273,3 +250,34 @@ def main():
         devices = pci_filter_for_gpu(host.get_pci_devices())
         if devices:
             print_unit("GPU Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
+
+def main():
+    """Entry Point"""
+
+    parser = ArgumentParser(prog="hwinfo")
+
+    filter_choices = ['bios', 'nic', 'storage', 'gpu', 'cpu']
+    parser.add_argument("-f", "--filter", choices=filter_choices, help="Query a specific class.")
+    parser.add_argument("-m", "--machine", default='localhost', help="Remote host address.")
+    parser.add_argument("-u", "--username", help="Username for remote host.")
+    parser.add_argument("-p", "--password", help="Password for remote host.")
+    parser.add_argument("-l", "--logs", help="Path to the directory with the logfiles.")
+
+    args = parser.parse_args()
+    validate_args(args)
+
+    if args.logs:
+        host = HostFromLogs(args.logs)
+    else:
+        host = Host(args.machine, args.username, args.password)
+
+    options = []
+
+    if args.filter:
+        filter_args = args.filter.split(',')
+        for arg in filter_args:
+            options.append(arg.strip())
+    else:
+        options = filter_choices
+
+    print_system_info(host, options)
