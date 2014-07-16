@@ -6,10 +6,10 @@ setup(
     name='python-hwinfo',
     author='Rob Dobson',
     author_email = 'rob@rdobson.co.uk',
-    version = '0.1.2',
+    version = '0.1.3',
     description = 'Library for parsing hardware info on Linux OSes.',
     url = 'https://github.com/rdobson/python-hwinfo',
-    download_url = 'https://github.com/rdobson/python-hwinfo/tarball/0.1.1',
+    download_url = 'https://github.com/rdobson/python-hwinfo/tarball/0.1.3',
     packages=find_packages(),
     entry_points = {
         'console_scripts': [
