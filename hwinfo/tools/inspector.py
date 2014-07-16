@@ -13,10 +13,13 @@ from hwinfo.pci.lspci import *
 from hwinfo.host import dmidecode
 from hwinfo.host import cpuinfo
 
-def remote_command(host, username, password, cmd):
+def get_ssh_client(host, username, password, timeout=10):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(host, username=username, password=password, timeout=10)
+    client.connect(host, username=username, password=password, timeout=timeout)
+    return client
+
+def remote_command(client, cmd):
     cmdstr = ' '.join(cmd)
     #print "Executing '%s' on host '%s'" % (cmdstr, host)
     _, stdout, stderr = client.exec_command(cmdstr)
@@ -24,7 +27,6 @@ def remote_command(host, username, password, cmd):
     error = stderr.readlines()
     if error:
         raise Exception("stderr: %s" % error)
-    client.close()
     return ''.join(output)
 
 def local_command(cmd):
@@ -44,12 +46,22 @@ class Host(object):
         self.host = host
         self.username = username
         self.password = password
+        self.client = None
+        if self.is_remote():
+            self.client = get_ssh_client(self.host, self.username, self.password)
+
+    def __del__(self):
+        if self.client:
+            self.client.close()
+
+    def is_remote(self):
+        return self.host != 'localhost'
 
     def exec_command(self, cmd):
-        if self.host == 'localhost':
-            return local_command(cmd)
+        if self.is_remote():
+            return remote_command(self.client, cmd)
         else:
-            return remote_command(self.host, self.username, self.password, cmd)
+            return local_command(cmd)
 
     def get_lspci_data(self):
         return self.exec_command(['lspci', '-nnmm'])
