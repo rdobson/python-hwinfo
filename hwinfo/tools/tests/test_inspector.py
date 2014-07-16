@@ -13,11 +13,13 @@ class HostObjectTests(unittest.TestCase):
         host.exec_command('ls')
         inspector.local_command.assert_called_once_with('ls')
 
+    @patch('hwinfo.tools.inspector.get_ssh_client')
     @patch('hwinfo.tools.inspector.remote_command')
-    def test_remote_exec_command(self, remote_command):
+    def test_remote_exec_command(self, remote_command, get_ssh_client):
+        mclient = get_ssh_client.return_value = mock.MagicMock()
         host = inspector.Host('mymachine', 'root', 'pass')
         host.exec_command('ls')
-        inspector.remote_command.assert_called_once_with('mymachine', 'root', 'pass', 'ls')
+        inspector.remote_command.assert_called_once_with(mclient, 'ls')
 
     @patch('hwinfo.tools.inspector.Host.exec_command')
     def test_get_pci_devices(self, exec_command):
@@ -35,6 +37,15 @@ class HostObjectTests(unittest.TestCase):
         rec = host.get_info()
         self.assertEqual(rec, {'key':'value'})
 
+    def test_is_not_remote(self):
+        host = inspector.Host()
+        self.assertEqual(host.is_remote(), False)
+
+    @patch('hwinfo.tools.inspector.get_ssh_client')
+    def test_is_remote(self, get_ssh_client):
+        get_ssh_client.return_value = mock.MagicMock()
+        host = inspector.Host('test', 'user', 'pass')
+        self.assertEqual(host.is_remote(), True)
 
 class RemoteCommandTests(unittest.TestCase):
 
@@ -47,7 +58,7 @@ class RemoteCommandTests(unittest.TestCase):
     def test_ssh_connect(self, ssh_client_cls):
         client = ssh_client_cls.return_value = mock.Mock()
         client.exec_command.return_value = self.stdout, self.stdin, self.stderr
-        inspector.remote_command('test', 'user', 'pass', 'ls')
+        inspector.get_ssh_client('test', 'user', 'pass')
         client.connect.assert_called_with('test', password='pass', username='user', timeout=10)
 
     @patch('paramiko.SSHClient')
@@ -55,7 +66,7 @@ class RemoteCommandTests(unittest.TestCase):
         client = ssh_client_cls.return_value = mock.Mock()
         client.exec_command.return_value = self.stdout, self.stdin, StringIO("Error")
         with self.assertRaises(Exception) as context:
-            inspector.remote_command('test', 'user', 'pass', 'ls')
+            inspector.remote_command(client, 'ls')
         self.assertEqual(context.exception.message, "stderr: ['Error']")
 
 class LocalCommandTests(unittest.TestCase):
