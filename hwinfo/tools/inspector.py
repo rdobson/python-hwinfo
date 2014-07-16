@@ -42,11 +42,12 @@ def local_command(cmd):
 
 class Host(object):
 
+    client = None
+
     def __init__(self, host='localhost', username=None, password=None):
         self.host = host
         self.username = username
         self.password = password
-        self.client = None
         if self.is_remote():
             self.client = get_ssh_client(self.host, self.username, self.password)
 
