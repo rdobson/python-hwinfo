@@ -170,7 +170,7 @@ def pci_filter_for_nics(devices):
     return pci_filter(devices, nic_types)
 
 def pci_filter_for_storage(devices):
-    storage_types = ['00', '01']
+    storage_types = ['00', '01', '0c04', '0c06']
     return pci_filter(devices, storage_types)
 
 def pci_filter_for_gpu(devices):
