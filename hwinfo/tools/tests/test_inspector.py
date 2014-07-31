@@ -97,13 +97,15 @@ class PCIFilterTests(unittest.TestCase):
         device_b = mock.MagicMock()
         device_c = mock.MagicMock()
         device_d = mock.MagicMock()
+        device_e = mock.MagicMock()
 
         device_a.get_pci_class.return_value = '0230'
         device_b.get_pci_class.return_value = '0340'
         device_c.get_pci_class.return_value = '0210'
         device_d.get_pci_class.return_value = '0100'
+        device_e.get_pci_class.return_value = '0c04'
 
-        self.devices = [device_a, device_b, device_c, device_d]
+        self.devices = [device_a, device_b, device_c, device_d, device_e]
 
     def test_pci_filter_match_all(self):
         devs = inspector.pci_filter(self.devices, ['0'])
@@ -130,8 +132,7 @@ class PCIFilterTests(unittest.TestCase):
 
     def test_pci_filter_for_storage(self):
         devs = inspector.pci_filter_for_storage(self.devices)
-        self.assertEqual(len(devs), 1)
-        self.assertEqual(devs[0].get_pci_class(), '0100')
+        self.assertEqual(len(devs), 2)
 
     def test_pci_filter_for_gpu(self):
         devs = inspector.pci_filter_for_gpu(self.devices)

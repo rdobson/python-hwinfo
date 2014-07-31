@@ -280,6 +280,24 @@ class IntelNetDeviceParser(TestSingleDeviceNNMMParse):
         'pci_subdevice_id': '05d2',
     }
 
+class BrocadeNetDeviceParser(TestSingleDeviceNNMMParse):
+
+    SAMPLE_DATA = '0d:00.3 "Ethernet controller [0200]" "Brocade Communications Systems, Inc. [1657]" "1010/1020/1007/1741 10Gbps CNA [0014]" -r01 "Brocade Communications Systems, Inc. [1657]" "1010/1020/1007/1741 10Gbps CNA - LL [0015]"'
+
+    DEVICE_REC = {
+        'pci_device_bus_id': '0d:00.3',
+        'pci_device_class': '0200',
+        'pci_device_class_name': 'Ethernet controller',
+        'pci_vendor_name': 'Brocade Communications Systems, Inc.',
+        'pci_vendor_id': '1657',
+        'pci_device_id': '0014',
+        'pci_device_name': '1010/1020/1007/1741 10Gbps CNA',
+        'pci_subvendor_name': 'Brocade Communications Systems, Inc.',
+        'pci_subvendor_id': '1657',
+        'pci_subdevice_name': '1010/1020/1007/1741 10Gbps CNA - LL',
+        'pci_subdevice_id': '0015',
+    }
+
 class TestMultiDeviceNNMMParse(unittest.TestCase):
 
     SAMPLE_FILE = '%s/lspci-nnmm' % DATA_DIR

@@ -19,5 +19,6 @@ setup(
     install_requires = [
         'paramiko',
         'prettytable',
+        'argparse',
     ],
     )
