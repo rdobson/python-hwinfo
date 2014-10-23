@@ -225,6 +225,24 @@ class EmulexNicDeviceParse(TestSingleDeviceNNMMParse):
         'pci_subdevice_id': 'e70b',
     }
 
+class EmulexHbDeviceParse(TestSingleDeviceNNMMParse):
+
+    SAMPLE_DATA = '07:00.0 "Fibre Channel [0c04]" "Emulex Corporation [10df]" "Saturn-X: LightPulse Fibre Channel Host Adapter [f100]" -r03 "Hewlett-Packard Company [103c]" "Device [3282]"'
+
+    DEVICE_REC = {
+        'pci_device_bus_id': '07:00.0',
+        'pci_device_class': '0c04',
+        'pci_device_class_name': 'Fibre Channel',
+        'pci_vendor_name': 'Emulex Corporation',
+        'pci_vendor_id': '10df',
+        'pci_device_id': 'f100',
+        'pci_device_name': 'Saturn-X: LightPulse Fibre Channel Host Adapter',
+        'pci_subvendor_name': 'Hewlett-Packard Company',
+        'pci_subvendor_id': '103c',
+        'pci_subdevice_name': 'Device',
+        'pci_subdevice_id': '3282',
+    }
+
 class LsiSASDeviceParse(TestSingleDeviceNNMMParse):
 
     SAMPLE_DATA = '06:00.0 "Serial Attached SCSI controller [0107]" "LSI Logic / Symbios Logic [1000]" "SAS2004 PCI-Express Fusion-MPT SAS-2 [Spitfire] [0070]" -r03 "IBM [1014]" "Device [03f8]"'

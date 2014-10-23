@@ -5,7 +5,7 @@ from hwinfo.util import CommandParser
 class ParserException(Exception):
     pass
 
-LABEL_REGEX = r'[\w+\ \.\,\+\&\-\/\[\]\(\)]+'
+LABEL_REGEX = r'[\w+\ \.\,\:\+\&\-\/\[\]\(\)]+'
 CODE_REGEX = r'[0-9a-fA-F]{4}'
 BUSID_REGEX = r'[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]'
 

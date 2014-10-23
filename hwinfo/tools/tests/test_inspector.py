@@ -48,6 +48,57 @@ class HostObjectTests(unittest.TestCase):
         host = inspector.Host('test', 'user', 'pass')
         self.assertEqual(host.is_remote(), True)
 
+
+class HostFromTarballTests(unittest.TestCase):
+
+    @patch('hwinfo.tools.inspector.find_in_tarball')
+    @patch('hwinfo.tools.inspector.read_from_tarball')
+    def test__load_from_file(self, read_from_tarball, find_in_tarball):
+        tarball_name = 'test.tar.gz'
+        filename = 'foobar.txt'
+        filepath = find_in_tarball.return_value = \
+            'somedir/anotherdir/%s' % filename
+
+        host = inspector.HostFromTarball('test.tar.gz')
+        host._load_from_file(filename)
+
+        find_in_tarball.assert_called_once_with(tarball_name, filename)
+        read_from_tarball.assert_called_once_with(tarball_name, filepath)
+
+class UtilTests(unittest.TestCase):
+
+    @patch('tarfile.open')
+    def test_find_in_tarball(self, tar_open):
+        mtarfh = tar_open.return_value = mock.MagicMock()
+        filename = 'foo.bar'
+        filepath = 'testing/path/%s' % filename
+
+        paths = [filepath, 'something/else/foo.pdf', 'extra/file.bin']
+
+        mtar_infos = []
+        for p in paths:
+            m = mock.MagicMock()
+            m.name = p
+            mtar_infos.append(m)
+
+        mtarfh.getmembers.return_value = mtar_infos
+
+        path = inspector.find_in_tarball(mtarfh, filename)
+        self.assertEqual(filepath, path)
+
+
+    @patch('hwinfo.tools.inspector.read_from_file')
+    @patch('tarfile.open')
+    def test_read_from_tarball(self, tar_open, read_from_file):
+        mtarfh = tar_open.return_value = mock.MagicMock()
+        filepath = 'something/else/foo.pdf'
+
+        mread = read_from_file.return_value = 'blah blah blah'
+
+        data = inspector.read_from_tarball('testtar.tar.gz', filepath)
+        self.assertEqual(mread, data)
+
+
 class RemoteCommandTests(unittest.TestCase):
 
     def setUp(self):

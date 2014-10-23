@@ -6,6 +6,11 @@ import paramiko
 import subprocess
 import os
 import sys
+import tarfile
+import random
+import string
+import tempfile
+import shutil
 
 from hwinfo.pci import PCIDevice
 from hwinfo.pci.lspci import *
@@ -39,6 +44,34 @@ def local_command(cmd):
         print "RC: %s" % process.returncode
         print stdout
         raise Exception("stderr: %s" % str(stderr))
+
+def find_in_tarball(tarball, filename):
+    tar = tarfile.open(tarball)
+    members = tar.getmembers()
+    tar.close()
+    matches = []
+    for m in members:
+        if m.name.endswith(filename):
+            matches.append(m.name)
+
+    if len(matches) > 1:
+        raise Exception("Error: more than one match for that filename")
+
+    return matches.pop()
+
+def read_from_tarball(tarball, filename):
+    tar = tarfile.open(tarball)
+    data = None
+    tmpdir = tempfile.mkdtemp()
+
+    tar.extract(filename, tmpdir)
+    data = read_from_file("%s/%s" % (tmpdir, filename))
+
+    tar.close()
+    if os.path.exists(tmpdir):
+        shutil.rmtree(tmpdir)
+
+    return data
 
 class Host(object):
 
@@ -155,6 +188,15 @@ class HostFromLogs(Host):
             recs = combine_recs(all_recs, 'pci_device_bus_id')
             return [PCIDevice(rec) for rec in recs]
 
+class HostFromTarball(HostFromLogs):
+
+    def __init__(self, filename):
+        self.tarloc = filename
+
+    def _load_from_file(self, filename):
+        """Find filename in tar, and load it"""
+        filepath = find_in_tarball(self.tarloc, filename)
+        return read_from_tarball(self.tarloc, filepath)
 
 def pci_filter(devices, types):
     res = []
