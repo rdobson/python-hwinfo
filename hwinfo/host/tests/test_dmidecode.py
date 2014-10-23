@@ -17,6 +17,7 @@ class DmidecodeParserTests(unittest.TestCase):
         'system_product_name': 'PowerEdge R310',
         'system_serial_number': 'GZ7BS4J',
         'system_uuid': '4C4C4544-005A-3710-8042-C7C04F53344A',
+        'chassis_type': 'Rack Mount Chassis',
     }
 
 
@@ -50,3 +51,6 @@ class DmidecodeParserTests(unittest.TestCase):
 
     def test_dmidecode_system_uuid(self):
         return self._assert_equal('system_uuid')
+
+    def test_dmidecode_chassis_type(self):
+        return self._assert_equal('chassis_type')

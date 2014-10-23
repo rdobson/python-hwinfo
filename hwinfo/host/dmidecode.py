@@ -14,6 +14,8 @@ class DmidecodeParser(CommandParser):
         r'System\ Information\n(.)*\n\tProduct\ Name:\ (?P<system_product_name>.*)\n',
         r'System\ Information\n(.)*\n(.)*\n(.)*\n\tSerial\ Number:\ (?P<system_serial_number>.*)\n',
         r'System\ Information\n(.)*\n(.)*\n(.)*\n(.)*\n\tUUID:\ (?P<system_uuid>.*)\n',
+        # Chassis Info
+        r'Chassis\ Information\n(.)*\n\tType:\ (?P<chassis_type>.*)\n',
     ]
 
 
