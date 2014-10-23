@@ -57,7 +57,25 @@ def find_in_tarball(tarball, filename):
     if len(matches) > 1:
         raise Exception("Error: more than one match for that filename")
 
+    if not matches:
+        raise FileNotFound("Cound not find %s in %s" % (filename, tarball))
     return matches.pop()
+
+def read_files_from_tarball(tarball, files):
+    tar = tarfile.open(tarball)
+    data = None
+    tmpdir = tempfile.mkdtemp()
+
+
+    file_data = {}
+    for f in files:
+        tar.extract(f, tmpdir)
+        file_data[os.path.basename(f)] = read_from_file("%s/%s" % (tmpdir, f))
+
+    tar.close()
+    if os.path.exists(tmpdir):
+        shutil.rmtree(tmpdir)
+    return file_data
 
 def read_from_tarball(tarball, filename):
     tar = tarfile.open(tarball)
@@ -224,11 +242,34 @@ class HostFromTarball(HostFromLogs):
 
     def __init__(self, filename):
         self.tarloc = filename
+        pre_load_files = [
+            'lspci-nnm.out',
+            'lspci-vv.out',
+            'lspci-n.out',
+            'dmidecode.out',
+            'cpuinfo',
+            'xensource-inventory'
+        ]
+
+        self._preload_files(pre_load_files)
+
+    def _preload_files(self, filenames):
+        paths = []
+        for f in filenames:
+            try:
+                filepath = find_in_tarball(self.tarloc, f)
+                paths.append(filepath)
+            except FileNotFound:
+                continue
+        self.fdata = read_files_from_tarball(self.tarloc, paths)
 
     def _load_from_file(self, filename):
         """Find filename in tar, and load it"""
-        filepath = find_in_tarball(self.tarloc, filename)
-        return read_from_tarball(self.tarloc, filepath)
+        if filename in self.fdata:
+            return self.fdata[filename]
+        else:
+            filepath = find_in_tarball(self.tarloc, filename)
+            return read_from_tarball(self.tarloc, filepath)
 
 def pci_filter(devices, types):
     res = []
