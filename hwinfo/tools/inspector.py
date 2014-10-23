@@ -73,6 +73,16 @@ def read_from_tarball(tarball, filename):
 
     return data
 
+def parse_kvp_string(data):
+    rec = {}
+    lines = data.split('\n')
+    for line in lines:
+        if not line:
+            continue
+        k, v = line.split('=')
+        rec[k] = v.strip("'")
+    return rec
+
 class Host(object):
 
     client = None
@@ -106,6 +116,17 @@ class Host(object):
     def get_cpuinfo_data(self):
         return self.exec_command(['cat /proc/cpuinfo'])
 
+    def get_os_data(self):
+         return self.exec_command(['cat', '/etc/xensource-inventory'])
+
+    def get_os_info(self):
+        rec = {}
+        os_rec = parse_kvp_string(self.get_os_data())
+        rec['os'] = os_rec['PRODUCT_BRAND']
+        rec['version'] = os_rec['PRODUCT_VERSION']
+        rec['build'] = os_rec['BUILD_NUMBER']
+        return rec
+
     def get_pci_devices(self):
         data = self.get_lspci_data()
         parser = LspciNNMMParser(data)
@@ -116,6 +137,14 @@ class Host(object):
         data = self.get_dmidecode_data()
         parser = dmidecode.DmidecodeParser(data)
         rec = parser.parse()
+        try:
+            os_rec = self.get_os_info()
+            for k, v in os_rec.iteritems():
+                rec[k] = v
+        except:
+            #Ignore failures. Only supports XS right now.
+            pass
+
         return rec
 
     def get_cpu_info(self):
@@ -174,6 +203,9 @@ class HostFromLogs(Host):
 
     def get_cpuinfo_data(self):
         return self._load_from_file('cpuinfo')
+
+    def get_os_data(self):
+        return self._load_from_file('xensource-inventory')
 
     def get_pci_devices(self):
         try:
