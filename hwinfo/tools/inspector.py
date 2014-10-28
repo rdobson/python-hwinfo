@@ -51,7 +51,7 @@ def find_in_tarball(tarball, filename):
     tar.close()
     matches = []
     for m in members:
-        if m.name.endswith(filename):
+        if m.name.endswith(filename) and "/crash/" not in m.name:
             matches.append(m.name)
 
     if len(matches) > 1:
