@@ -240,7 +240,9 @@ class HostFromLogs(Host):
 
 class HostFromTarball(HostFromLogs):
 
-    def __init__(self, filename):
+    fdata = {}
+
+    def __init__(self, filename, preload=True):
         self.tarloc = filename
         pre_load_files = [
             'lspci-nnm.out',
@@ -251,7 +253,8 @@ class HostFromTarball(HostFromLogs):
             'xensource-inventory'
         ]
 
-        self._preload_files(pre_load_files)
+        if preload:
+            self._preload_files(pre_load_files)
 
     def _preload_files(self, filenames):
         paths = []

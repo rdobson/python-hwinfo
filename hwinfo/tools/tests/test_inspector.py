@@ -59,7 +59,7 @@ class HostFromTarballTests(unittest.TestCase):
         filepath = find_in_tarball.return_value = \
             'somedir/anotherdir/%s' % filename
 
-        host = inspector.HostFromTarball('test.tar.gz')
+        host = inspector.HostFromTarball('test.tar.gz', preload=False)
         host._load_from_file(filename)
 
         find_in_tarball.assert_called_once_with(tarball_name, filename)
