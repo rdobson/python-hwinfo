@@ -16,6 +16,8 @@ class DmidecodeParser(CommandParser):
         r'System\ Information\n(.)*\n(.)*\n(.)*\n(.)*\n\tUUID:\ (?P<system_uuid>.*)\n',
         # Chassis Info
         r'Chassis\ Information\n(.)*\n\tType:\ (?P<chassis_type>.*)\n',
+        # Processor Info
+        r'Processor\ Information\n\tSocket\ Designation:\ (?P<socket_designation>.*)\n',
     ]
 
 

@@ -2,6 +2,23 @@
 
 import re
 
+def combine_dicts(recs):
+    """Combine a list of recs, appending values to matching keys"""
+    if not recs:
+        return None
+
+    if len(recs) == 1:
+        return recs.pop()
+
+    new_rec = {}
+    for rec in recs:
+        for k, v in rec.iteritems():
+            if k in new_rec:
+                new_rec[k] = "%s, %s" % (new_rec[k], v)
+            else:
+                new_rec[k] = v
+    return new_rec
+
 class CommandParser(object):
     """Object for extending to parse command outputs"""
 
@@ -29,10 +46,10 @@ class CommandParser(object):
     def parse_item(self, item):
         rec = {}
         for regex in self.ITEM_REGEXS:
-            match = re.search(regex, item)
-            if match:
-                rec = dict(rec.items() + match.groupdict().items())
-
+            matches = [m.groupdict() for m in re.finditer(regex, item)]
+            mdicts = combine_dicts(matches)
+            if mdicts:
+                rec = dict(rec.items() + mdicts.items())
         return rec
 
     def parse_items(self):

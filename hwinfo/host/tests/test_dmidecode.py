@@ -18,6 +18,7 @@ class DmidecodeParserTests(unittest.TestCase):
         'system_serial_number': 'GZ7BS4J',
         'system_uuid': '4C4C4544-005A-3710-8042-C7C04F53344A',
         'chassis_type': 'Rack Mount Chassis',
+        'socket_designation': 'CPU1, CPU2',
     }
 
 
@@ -54,3 +55,6 @@ class DmidecodeParserTests(unittest.TestCase):
 
     def test_dmidecode_chassis_type(self):
         return self._assert_equal('chassis_type')
+
+    def test_dmidecode_socket_designation_type(self):
+        return self._assert_equal('socket_designation')

@@ -7,8 +7,6 @@ import subprocess
 import os
 import sys
 import tarfile
-import random
-import string
 import tempfile
 import shutil
 
@@ -63,7 +61,6 @@ def find_in_tarball(tarball, filename):
 
 def read_files_from_tarball(tarball, files):
     tar = tarfile.open(tarball)
-    data = None
     tmpdir = tempfile.mkdtemp()
 
 
@@ -135,7 +132,7 @@ class Host(object):
         return self.exec_command(['cat /proc/cpuinfo'])
 
     def get_os_data(self):
-         return self.exec_command(['cat', '/etc/xensource-inventory'])
+        return self.exec_command(['cat', '/etc/xensource-inventory'])
 
     def get_os_info(self):
         rec = {}
@@ -155,11 +152,16 @@ class Host(object):
         data = self.get_dmidecode_data()
         parser = dmidecode.DmidecodeParser(data)
         rec = parser.parse()
+        print rec
+        #Count sockets
+        if 'socket_designation' in rec:
+            rec['socket_count'] = len(rec['socket_designation'].split(','))
+
         try:
             os_rec = self.get_os_info()
             for k, v in os_rec.iteritems():
                 rec[k] = v
-        except:
+        except Exception:
             #Ignore failures. Only supports XS right now.
             pass
 
