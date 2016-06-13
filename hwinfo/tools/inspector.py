@@ -412,7 +412,10 @@ def main():
     validate_args(args)
 
     if args.logs:
-        host = HostFromLogs(args.logs)
+        if ".tar" in args.logs:
+            host = HostFromTarball(args.logs)
+        else:
+            host = HostFromLogs(args.logs)
     else:
         host = Host(args.machine, args.username, args.password)
 

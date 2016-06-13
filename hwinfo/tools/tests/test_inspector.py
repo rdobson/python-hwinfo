@@ -402,6 +402,14 @@ class CLITests(unittest.TestCase):
         args.password = None
         inspector.validate_args(args)
 
+    @patch('hwinfo.tools.inspector.print_system_info')
+    @patch('hwinfo.tools.inspector.HostFromTarball')
+    def test_from_tarball(self, host_cls, print_system_info):
+        sys.argv = ['hwinfo', '-l', 'ack-submission.tar.gz']
+        mhost = host_cls.return_value = mock.MagicMock()
+        inspector.main()
+        host_cls.assert_called_with('ack-submission.tar.gz')
+
 class PrintSystemInfoTests(unittest.TestCase):
 
     @patch('hwinfo.tools.inspector.print_unit')
