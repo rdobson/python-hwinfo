@@ -369,6 +369,14 @@ class CLITests(unittest.TestCase):
         inspector.main()
         print_system_info.assert_called_with(mhost, ['gpu'])
 
+    @patch('hwinfo.tools.inspector.export_system_info')
+    @patch('hwinfo.tools.inspector.Host')
+    def test_export(self, host_cls, export_system_info):
+        sys.argv = ['hwinfo', '-e']
+        mhost = host_cls.return_value = mock.MagicMock()
+        inspector.main()
+        export_system_info.assert_called_with(mhost, self.OPTIONS)
+
     @patch('sys.exit')
     def test_validate_args_no_username(self, exit):
         args = mock.MagicMock()

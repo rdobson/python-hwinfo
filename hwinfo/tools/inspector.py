@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from argparse import ArgumentParser
-from prettytable import PrettyTable
 import paramiko
 import subprocess
 import os
@@ -9,6 +8,9 @@ import sys
 import tarfile
 import tempfile
 import shutil
+import json
+
+from prettytable import PrettyTable
 
 from hwinfo.pci import PCIDevice
 from hwinfo.pci.lspci import *
@@ -152,7 +154,6 @@ class Host(object):
         data = self.get_dmidecode_data()
         parser = dmidecode.DmidecodeParser(data)
         rec = parser.parse()
-        print rec
         #Count sockets
         if 'socket_designation' in rec:
             rec['socket_count'] = len(rec['socket_designation'].split(','))
@@ -371,6 +372,29 @@ def print_system_info(host, options):
         if devices:
             print_unit("GPU Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
 
+def export_system_info(host, options):
+    rec = {}
+
+    if 'bios' in options:
+        rec["bios"] = host.get_info()
+
+    if 'cpu' in options:
+        rec["cpu"] = host.get_cpu_info()
+
+    if 'nic' in options:
+        devices = pci_filter_for_nics(host.get_pci_devices())
+        rec["nics"] = [dev.get_rec() for dev in devices]
+
+    if 'storage' in options:
+        devices = pci_filter_for_storage(host.get_pci_devices())
+        rec["storage_controllers"] = [dev.get_rec() for dev in devices]
+
+    if 'gpu' in options:
+        devices = pci_filter_for_gpu(host.get_pci_devices())
+        rec["gpus"] = [dev.get_rec() for dev in devices]
+
+    print json.dumps(rec, indent=4, separators=(',', ': '))
+
 def main():
     """Entry Point"""
 
@@ -382,6 +406,7 @@ def main():
     parser.add_argument("-u", "--username", help="Username for remote host.")
     parser.add_argument("-p", "--password", help="Password for remote host.")
     parser.add_argument("-l", "--logs", help="Path to the directory with the logfiles.")
+    parser.add_argument("-e", "--export", action="store_true", help="Export result in JSON format.")
 
     args = parser.parse_args()
     validate_args(args)
@@ -400,4 +425,7 @@ def main():
     else:
         options = filter_choices
 
-    print_system_info(host, options)
+    if args.export:
+        export_system_info(host, options)
+    else:
+        print_system_info(host, options)
