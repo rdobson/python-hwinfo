@@ -33,7 +33,10 @@ class CommandParser(object):
         self.set_seperator(seperator)
 
     def set_data(self, data):
-        self.DATA = data.strip()
+        if data:
+            self.DATA = data.strip()
+        else:
+            self.DATA = ""
 
     def set_regexs(self, regexs):
         if regexs:
