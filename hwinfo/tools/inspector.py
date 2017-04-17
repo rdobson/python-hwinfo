@@ -315,6 +315,7 @@ def tabulate_recs(recs, header):
 
 def tabulate_pci_recs(recs):
     header = [
+        'device_bus_id',
         'vendor_name',
         'vendor_id',
         'device_name',
@@ -338,12 +339,8 @@ def tabulate_cpu_recs(recs):
     ]
     return tabulate_recs(recs, header)
 
-def print_unit(title, content):
-    print "%s" % title
-    print ""
-    print content
-    print ""
-
+def create_unit(title, content):
+    return "\n%s\n\n%s\n" % (str(title), str(content))
 
 def validate_args(args):
     if args.machine != 'localhost':
@@ -351,26 +348,29 @@ def validate_args(args):
             print "Error: you must specify a username and password to query a remote machine."
             sys.exit(1)
 
-def print_system_info(host, options):
+def system_info(host, options):
+    info = []
 
     if 'bios' in options:
-        print_unit("Bios Info:", rec_to_table(host.get_info()))
+        info.append(create_unit("Bios Info:", rec_to_table(host.get_info())))
 
     if 'cpu' in options:
-        print_unit("CPU Info:", tabulate_cpu_recs(host.get_cpu_info()))
+        info.append(create_unit("CPU Info:", tabulate_cpu_recs(host.get_cpu_info())))
 
     if 'nic' in options:
         devices = pci_filter_for_nics(host.get_pci_devices())
-        print_unit("Ethernet Controller Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
+        info.append(create_unit("Ethernet Controller Info:", tabulate_pci_recs([dev.get_rec() for dev in devices])))
 
     if 'storage' in options:
         devices = pci_filter_for_storage(host.get_pci_devices())
-        print_unit("Storage Controller Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
+        info.append(create_unit("Storage Controller Info:", tabulate_pci_recs([dev.get_rec() for dev in devices])))
 
     if 'gpu' in options:
         devices = pci_filter_for_gpu(host.get_pci_devices())
         if devices:
-            print_unit("GPU Info:", tabulate_pci_recs([dev.get_rec() for dev in devices]))
+            info.append(create_unit("GPU Info:", tabulate_pci_recs([dev.get_rec() for dev in devices])))
+
+    return "".join(info).strip()
 
 def export_system_info(host, options):
     rec = {}
@@ -393,7 +393,7 @@ def export_system_info(host, options):
         devices = pci_filter_for_gpu(host.get_pci_devices())
         rec["gpus"] = [dev.get_rec() for dev in devices]
 
-    print json.dumps(rec, indent=4, separators=(',', ': '))
+    return json.dumps(rec, indent=4, separators=(',', ': '))
 
 def main():
     """Entry Point"""
@@ -429,6 +429,6 @@ def main():
         options = filter_choices
 
     if args.export:
-        export_system_info(host, options)
+        print export_system_info(host, options)
     else:
-        print_system_info(host, options)
+        print system_info(host, options)
