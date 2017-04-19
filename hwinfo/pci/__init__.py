@@ -42,6 +42,9 @@ class PCIDevice(object):
     def get_device_id(self):
         return self._fmt(self.lookup_value('pci_device_id'))
 
+    def get_device_bus_id(self):
+        return self._fmt(self.lookup_value('pci_device_bus_id'))
+
     def get_vendor_name(self):
         return self._fmt(self.lookup_value('pci_vendor_name'))
 
@@ -96,6 +99,7 @@ class PCIDevice(object):
 
     def get_rec(self):
         rec = {}
+        rec['device_bus_id'] = self.get_device_bus_id()
         rec['vendor_name'] = self.get_vendor_name()
         rec['device_name'] = self.get_device_name()
         rec['vendor_id'] = self.get_vendor_id()

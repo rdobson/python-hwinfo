@@ -5,6 +5,21 @@ from mock import patch
 from StringIO import StringIO
 
 from hwinfo.tools import inspector
+import dummy_data
+
+class HostMock(inspector.Host):
+
+    def get_lspci_data(self):
+        return dummy_data.LSPCI_DUMMY
+
+    def get_dmidecode_data(self):
+        return dummy_data.DMIDECODE_DUMMY
+
+    def get_cpuinfo_data(self):
+        return dummy_data.CPUINFO_DUMMY
+
+    def get_os_data(self):
+        return dummy_data.OS_DUMMY
 
 class HostObjectTests(unittest.TestCase):
 
@@ -325,49 +340,49 @@ class CLITests(unittest.TestCase):
 
     OPTIONS = ['bios', 'nic', 'storage', 'gpu', 'cpu']
 
-    @patch('hwinfo.tools.inspector.print_system_info')
+    @patch('hwinfo.tools.inspector.system_info')
     @patch('hwinfo.tools.inspector.Host')
     @patch('sys.argv')
-    def test_local_machine(self, argv, host_cls, print_system_info):
+    def test_local_machine(self, argv, host_cls, system_info):
         argv = ['hwinfo']
         mhost = host_cls.return_value = mock.MagicMock()
         inspector.main()
         host_cls.assert_called_with('localhost',None, None)
-        print_system_info.assert_called_with(mhost, self.OPTIONS)
+        system_info.assert_called_with(mhost, self.OPTIONS)
 
-    @patch('hwinfo.tools.inspector.print_system_info')
+    @patch('hwinfo.tools.inspector.system_info')
     @patch('hwinfo.tools.inspector.Host')
-    def test_remote_machine(self, host_cls, print_system_info):
+    def test_remote_machine(self, host_cls, system_info):
         sys.argv = ['hwinfo', '-m', 'test', '-u', 'root', '-p', 'pass']
         mhost = host_cls.return_value = mock.MagicMock()
         inspector.main()
         host_cls.assert_called_with('test', 'root' , 'pass')
-        print_system_info.assert_called_with(mhost, self.OPTIONS)
+        system_info.assert_called_with(mhost, self.OPTIONS)
 
-    @patch('hwinfo.tools.inspector.print_system_info')
+    @patch('hwinfo.tools.inspector.system_info')
     @patch('hwinfo.tools.inspector.HostFromLogs')
-    def test_host_from_logs(self, host_cls, print_system_info):
+    def test_host_from_logs(self, host_cls, system_info):
         sys.argv = ['hwinfo', '-l', '/tmp/thisisatestpath']
         mhost = host_cls.return_value = mock.MagicMock()
         inspector.main()
         host_cls.assert_called_with('/tmp/thisisatestpath')
-        print_system_info.assert_called_with(mhost, self.OPTIONS)
+        system_info.assert_called_with(mhost, self.OPTIONS)
 
-    @patch('hwinfo.tools.inspector.print_system_info')
+    @patch('hwinfo.tools.inspector.system_info')
     @patch('hwinfo.tools.inspector.Host')
-    def test_local_machine_filter_for_nic(self, host_cls, print_system_info):
+    def test_local_machine_filter_for_nic(self, host_cls, system_info):
         sys.argv = ['hwinfo', '-f', 'nic']
         mhost = host_cls.return_value = mock.MagicMock()
         inspector.main()
-        print_system_info.assert_called_with(mhost, ['nic'])
+        system_info.assert_called_with(mhost, ['nic'])
 
-    @patch('hwinfo.tools.inspector.print_system_info')
+    @patch('hwinfo.tools.inspector.system_info')
     @patch('hwinfo.tools.inspector.Host')
-    def test_local_machine_filter_for_gpu(self, host_cls, print_system_info):
+    def test_local_machine_filter_for_gpu(self, host_cls, system_info):
         sys.argv = ['hwinfo', '-f', 'gpu']
         mhost = host_cls.return_value = mock.MagicMock()
         inspector.main()
-        print_system_info.assert_called_with(mhost, ['gpu'])
+        system_info.assert_called_with(mhost, ['gpu'])
 
     @patch('hwinfo.tools.inspector.export_system_info')
     @patch('hwinfo.tools.inspector.Host')
@@ -402,27 +417,24 @@ class CLITests(unittest.TestCase):
         args.password = None
         inspector.validate_args(args)
 
-    @patch('hwinfo.tools.inspector.print_system_info')
+    @patch('hwinfo.tools.inspector.system_info')
     @patch('hwinfo.tools.inspector.HostFromTarball')
-    def test_from_tarball(self, host_cls, print_system_info):
+    def test_from_tarball(self, host_cls, system_info):
         sys.argv = ['hwinfo', '-l', 'ack-submission.tar.gz']
         mhost = host_cls.return_value = mock.MagicMock()
         inspector.main()
         host_cls.assert_called_with('ack-submission.tar.gz')
 
-class PrintSystemInfoTests(unittest.TestCase):
+class SystemInfoTests(unittest.TestCase):
 
-    @patch('hwinfo.tools.inspector.print_unit')
-    def test_print_all(self, mprint_unit):
-        mhost = mock.MagicMock()
+    def test_print_all(self):
+        mhost =  HostMock()
         options = ['bios', 'nic', 'storage', 'gpu', 'cpu']
-        inspector.print_system_info(mhost, options)
-        # GPU is optionally shown only if devices exist
-        self.assertEqual(len(mprint_unit.mock_calls), 4)
+        out = inspector.system_info(mhost, options)
+        self.assertEqual(len(out.split(" Info:\n\n")), 6)
 
-    @patch('hwinfo.tools.inspector.print_unit')
-    def test_print_bios(self, mprint_unit):
-        mhost = mock.MagicMock()
+    def test_print_bios(self):
+        mhost =  HostMock()
         options = ['bios']
-        inspector.print_system_info(mhost, options)
-        self.assertEqual(len(mprint_unit.mock_calls), 1)
+        out = inspector.system_info(mhost, options)
+        self.assertEqual(len(out.split(" Info:\n\n")), 2)

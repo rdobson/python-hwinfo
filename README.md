@@ -31,9 +31,10 @@ For example, to parse a list of PCI devices:
 
     from hwinfo.pci import PCIDevice
     from hwinfo.pci.lspci import LspciNNMMParser
+    from subprocess import check_output
 
     # Obtain the output of lspci -nnmm from somewhere
-    lspci_output = exec_command('lspci -nnmm')
+    lspci_output = check_output(["lspci", "-nnmm"])
 
     # Parse the output using the LspciNNMMParser object
     parser = LspciNNMMParser(lspci_output)
@@ -84,11 +85,11 @@ For inspecting the hardware present on a local machine, execute:
 
     Ethernet Controller Info:
 
-    +-------------------+-----------+------------------------------------+-----------+----------------+--------------+----------------+--------------+
-    |    vendor_name    | vendor_id |            device_name             | device_id | subvendor_name | subvendor_id | subdevice_name | subdevice_id |
-    +-------------------+-----------+------------------------------------+-----------+----------------+--------------+----------------+--------------+
-    | Intel Corporation |    8086   | 82579LM Gigabit Network Connection |    1502   |      Dell      |     1028     | [Device 05d2]  |     05d2     |
-    +-------------------+-----------+------------------------------------+-----------+----------------+--------------+----------------+--------------+
+    +---------------+-------------------+-----------+------------------------------------+-----------+----------------+--------------+----------------+--------------+
+    | device_bus_id |    vendor_name    | vendor_id |            device_name             | device_id | subvendor_name | subvendor_id | subdevice_name | subdevice_id |
+    +---------------+-------------------+-----------+------------------------------------+-----------+----------------+--------------+----------------+--------------+
+    |    02:00.0    | Intel Corporation |    8086   | 82579LM Gigabit Network Connection |    1502   |      Dell      |     1028     | [Device 05d2]  |     05d2     |
+    +---------------+-------------------+-----------+------------------------------------+-----------+----------------+--------------+----------------+--------------+
 
     Storage Controller Info:
 
