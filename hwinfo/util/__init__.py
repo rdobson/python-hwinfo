@@ -52,7 +52,7 @@ class CommandParser(object):
             matches = [m.groupdict() for m in re.finditer(regex, item)]
             mdicts = combine_dicts(matches)
             if mdicts:
-                rec = dict(rec.items() + mdicts.items())
+                rec = dict(list(rec.items()) + list(mdicts.items()))
         return rec
 
     def parse_items(self):
@@ -60,7 +60,7 @@ class CommandParser(object):
             return [self.parse_item(self.DATA)]
         else:
             recs = []
-            for data in self.DATA.split(self.ITEM_SEPERATOR):
+            for data in self.DATA.decode().split(self.ITEM_SEPERATOR):
                 rec = self.parse_item(data)
                 recs.append(rec)
             return recs
