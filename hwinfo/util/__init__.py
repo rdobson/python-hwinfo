@@ -12,7 +12,7 @@ def combine_dicts(recs):
 
     new_rec = {}
     for rec in recs:
-        for k, v in rec.iteritems():
+        for k, v in rec.items():
             if k in new_rec:
                 new_rec[k] = "%s, %s" % (new_rec[k], v)
             else:
@@ -60,7 +60,7 @@ class CommandParser(object):
             return [self.parse_item(self.DATA)]
         else:
             recs = []
-            for data in self.DATA.decode().split(self.ITEM_SEPERATOR):
+            for data in str(self.DATA).split(self.ITEM_SEPERATOR):
                 rec = self.parse_item(data)
                 recs.append(rec)
             return recs

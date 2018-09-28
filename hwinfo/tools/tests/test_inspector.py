@@ -2,7 +2,10 @@ import unittest
 import mock
 import sys
 from mock import patch
-from StringIO import StringIO
+if sys.version_info[0] == 2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 from hwinfo.tools import inspector
 import dummy_data
@@ -134,14 +137,14 @@ class RemoteCommandTests(unittest.TestCase):
         client.exec_command.return_value = self.stdout, self.stdin, StringIO("Error")
         with self.assertRaises(Exception) as context:
             inspector.remote_command(client, 'ls')
-        self.assertEqual(context.exception.message, "stderr: ['Error']")
+        self.assertEqual(context.exception.args[0], "stderr: ['Error']")
 
 class LocalCommandTests(unittest.TestCase):
 
     @patch('subprocess.Popen')
     def test_local_call(self, mock_popen_cls):
         mprocess =mock_popen_cls.return_value = mock.MagicMock()
-        mprocess.communicate.return_value = 'test', None
+        mprocess.communicate.return_value = ('test').encode(), None
         mprocess.returncode = 0
         stdout = inspector.local_command("echo 'test'")
         self.assertEqual(stdout, 'test')
@@ -153,7 +156,7 @@ class LocalCommandTests(unittest.TestCase):
         mprocess.returncode = 1
         with self.assertRaises(Exception) as context:
             stdout = inspector.local_command("echo 'test'")
-        self.assertEqual(context.exception.message, "stderr: my error")
+        self.assertEqual(context.exception.args[0], "stderr: my error")
 
 
 class PCIFilterTests(unittest.TestCase):
@@ -180,7 +183,7 @@ class PCIFilterTests(unittest.TestCase):
     def test_pci_filter_match_two(self):
         devs = inspector.pci_filter(self.devices, ['02'])
         for dev in devs:
-            print dev.get_pci_class()
+            print(dev.get_pci_class())
         self.assertEqual(len(devs), 2)
 
     def test_pci_filter_match_one(self):
@@ -333,7 +336,7 @@ class CombineRecsTests(unittest.TestCase):
         ]
         with self.assertRaises(Exception) as context:
             combined_recs = inspector.combine_recs(recs, 'name')
-        self.assertEqual(context.exception.message, "Mis-match for key 'valuea'")
+        self.assertEqual(context.exception.args[0], "Mis-match for key 'valuea'")
 
 
 class CLITests(unittest.TestCase):
