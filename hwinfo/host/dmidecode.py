@@ -19,5 +19,3 @@ class DmidecodeParser(CommandParser):
         # Processor Info
         r'Processor\ Information\n\tSocket\ Designation:\ (?P<socket_designation>.*)\n',
     ]
-
-

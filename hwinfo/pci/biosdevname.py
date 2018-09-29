@@ -13,5 +13,3 @@ class BiosdevnameDParser(CommandParser):
         r'Driver\ version:\ (?P<driver_version>.*)\n',
         r'Firmware\ version:\ (?P<firmware_version>.*)\n',
     ]
-
-

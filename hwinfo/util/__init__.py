@@ -58,12 +58,11 @@ class CommandParser(object):
     def parse_items(self):
         if not self.ITEM_SEPERATOR:
             return [self.parse_item(self.DATA)]
-        else:
-            recs = []
-            for data in str(self.DATA).split(self.ITEM_SEPERATOR):
-                rec = self.parse_item(data)
-                recs.append(rec)
-            return recs
+        recs = []
+        for data in str(self.DATA).split(self.ITEM_SEPERATOR):
+            rec = self.parse_item(data)
+            recs.append(rec)
+        return recs
 
     def parse(self):
         if self.ITEM_SEPERATOR:

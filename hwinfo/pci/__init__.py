@@ -10,17 +10,14 @@ class PCIDevice(object):
     def lookup_value(self, k):
         if k in self.rec:
             return self.rec[k]
-        else:
-            return None
+        return None
 
     def _fmt(self, value, wrap=None):
         if not value:
             return self.NONE_VALUE
-        else:
-            if wrap:
-                return "%s%s%s" % (wrap, value, wrap)
-            else:
-                return value
+        if wrap:
+            return "%s%s%s" % (wrap, value, wrap)
+        return value
 
     def get_device_name(self):
         wrap = None
@@ -35,8 +32,7 @@ class PCIDevice(object):
             # If the input has come from lspci, this is the value for
             # not being able to find a key in the pciids db.
             return '[Device %s]' % self.get_device_id()
-        else:
-            return self._fmt(name, wrap)
+        return self._fmt(name, wrap)
 
 
     def get_device_id(self):
@@ -64,8 +60,7 @@ class PCIDevice(object):
             # If the input has come from lspci, this is the value for
             # not being able to find a key in the pciids db.
             return '[Device %s]' % self.get_subdevice_id()
-        else:
-            return self._fmt(name, wrap)
+        return self._fmt(name, wrap)
 
     def get_subdevice_id(self):
         return self._fmt(self.lookup_value('pci_subdevice_id'))
@@ -88,14 +83,13 @@ class PCIDevice(object):
         return self._fmt(self.lookup_value('pci_device_class'))
 
     def is_subdevice(self):
-        return self.lookup_value('pci_subvendor_id') and self.lookup_value('pci_subdevice_id') or self.lookup_value('pci_device_sub_string')
+        return self.lookup_value('pci_subdevice_id') if self.lookup_value('pci_subvendor_id') else self.lookup_value('pci_device_sub_string')
 
     def get_info(self):
 
         if self.is_subdevice():
             return "%s %s (%s %s)" % (self.get_subvendor_name(), self.get_subdevice_name(), self.get_vendor_name(), self.get_device_name())
-        else:
-            return "%s %s" % (self.get_vendor_name(), self.get_device_name())
+        return "%s %s" % (self.get_vendor_name(), self.get_device_name())
 
     def get_rec(self):
         rec = {}

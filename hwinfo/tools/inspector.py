@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from argparse import ArgumentParser
-import paramiko
 import subprocess
 import os
 import sys
@@ -9,6 +9,7 @@ import tarfile
 import tempfile
 import shutil
 import json
+import paramiko
 
 from prettytable import PrettyTable
 
@@ -121,8 +122,7 @@ class Host(object):
     def exec_command(self, cmd):
         if self.is_remote():
             return remote_command(self.client, cmd)
-        else:
-            return local_command(cmd)
+        return local_command(cmd)
 
     def get_lspci_data(self):
         return self.exec_command(['lspci', '-nnmm'])
@@ -273,9 +273,8 @@ class HostFromTarball(HostFromLogs):
         """Find filename in tar, and load it"""
         if filename in self.fdata:
             return self.fdata[filename]
-        else:
-            filepath = find_in_tarball(self.tarloc, filename)
-            return read_from_tarball(self.tarloc, filepath)
+        filepath = find_in_tarball(self.tarloc, filename)
+        return read_from_tarball(self.tarloc, filepath)
 
 def pci_filter(devices, types):
     res = []
