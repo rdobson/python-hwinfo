@@ -33,10 +33,7 @@ class CommandParser(object):
         self.set_seperator(seperator)
 
     def set_data(self, data):
-        if data:
-            self.DATA = data.strip()
-        else:
-            self.DATA = ""
+        self.DATA = data.strip()
 
     def set_regexs(self, regexs):
         if regexs:
@@ -49,10 +46,10 @@ class CommandParser(object):
     def parse_item(self, item):
         rec = {}
         for regex in self.ITEM_REGEXS:
-            matches = [m.groupdict() for m in re.finditer(regex, item)]
+            matches = [m.groupdict() for m in re.finditer(regex, item.decode())]
             mdicts = combine_dicts(matches)
             if mdicts:
-                rec = dict(list(rec.items()) + list(mdicts.items()))
+                rec.update(mdicts)
         return rec
 
     def parse_items(self):
@@ -60,7 +57,7 @@ class CommandParser(object):
             return [self.parse_item(self.DATA)]
         else:
             recs = []
-            for data in self.DATA.decode().split(self.ITEM_SEPERATOR):
+            for data in self.DATA.split(self.ITEM_SEPERATOR.encode()):
                 rec = self.parse_item(data)
                 recs.append(rec)
             return recs
