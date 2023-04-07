@@ -27,7 +27,7 @@ class TestSingleDeviceVVParse(unittest.TestCase):
         self.parser = LspciVVParser(data)
 
     def _assert_rec_key(self, rec, key):
-        self.assertEquals(rec[key], self.DEVICE_REC[key])
+        self.assertEqual(rec[key], self.DEVICE_REC[key])
 
     def test_pci_device_string(self):
         rec = self.parser.parse_items().pop()
@@ -43,12 +43,12 @@ class TestSingleDeviceVVParse(unittest.TestCase):
 
     def test_pci_device_sub_string(self):
         rec = self.parser.parse_items().pop()
-	self._assert_rec_key(rec, 'pci_device_sub_string')
-
+        self._assert_rec_key(rec, 'pci_device_sub_string')
+	    
     def test_pci_device_vpd_product_name(self):
         rec = self.parser.parse_items().pop()
-	self._assert_rec_key(rec, 'pci_device_vpd_product_name')
-
+        self._assert_rec_key(rec, 'pci_device_vpd_product_name')
+	    
 class TestMultiDeviceVVParse(unittest.TestCase):
 
     SAMPLE_DEVICE_FILE = "%s/lspci_vv" % DATA_DIR
@@ -64,7 +64,7 @@ class TestMultiDeviceVVParse(unittest.TestCase):
         self.assertEqual(len(recs), 58)
         found = False
         for rec in recs:
-            print rec
+            print(rec)
             if rec['pci_device_bus_id'] == '02:00.0':
                 self.assertEqual(rec['pci_device_class_name'], 'VGA compatible controller')
                 found = True
@@ -86,7 +86,7 @@ class TestSingleDeviceNParse(unittest.TestCase):
         self.rec = self.parser.parse_items().pop()
 
     def _assert_rec_key(self, key):
-        self.assertEquals(self.rec[key], self.DEVICE_REC[key])
+        self.assertEqual(self.rec[key], self.DEVICE_REC[key])
 
     def test_pci_device_bus_id(self):
         self._assert_rec_key('pci_device_bus_id')
@@ -138,7 +138,7 @@ class TestSingleDeviceNNMMParse(unittest.TestCase):
         self.rec = self.parser.parse_items()[0]
 
     def _assert_rec_key(self, key):
-        self.assertEquals(self.rec[key], self.DEVICE_REC[key])
+        self.assertEqual(self.rec[key], self.DEVICE_REC[key])
 
     def test_pci_device_bus_id(self):
         self._assert_rec_key('pci_device_bus_id')

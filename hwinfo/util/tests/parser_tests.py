@@ -7,10 +7,10 @@ class TestCommandParser(unittest.TestCase):
 
     def test_parse_item(self):
         data = 'one two three four: 845 six'
-	cp = CommandParser()
-	cp.ITEM_REGEXS = [r'four:\ (?P<num>\w+)']
-	rec = cp.parse_item(data)
-	self.assertEquals(rec['num'], '845')
+        cp = CommandParser()
+        cp.ITEM_REGEXS = [r'four:\ (?P<num>\w+)']
+        rec = cp.parse_item(data)
+        self.assertEqual(rec['num'], '845')
 
     def test_parse_items(self):
         data = """
@@ -34,10 +34,10 @@ lo        Link encap:Local Loopback
           RX bytes:3684827 (3.6 MB)  TX bytes:3684827 (3.6 MB)
 """
         regexs = [r'Link encap:(?P<encap>[\w]+)']
-	cp = CommandParser(data, regexs, seperator='\n\n')
-	recs = cp.parse_items()
-	to_match = ['Ethernet', 'Local']
-	for rec in recs:
+        cp = CommandParser(data, regexs, seperator='\n\n')
+        recs = cp.parse_items()
+        to_match = ['Ethernet', 'Local']
+        for rec in recs:
             val = rec['encap']
             to_match.remove(val)
 

@@ -2,7 +2,7 @@ import unittest
 import mock
 import sys
 from mock import patch
-from StringIO import StringIO
+from io import StringIO
 
 from hwinfo.tools import inspector
 import dummy_data
@@ -180,7 +180,7 @@ class PCIFilterTests(unittest.TestCase):
     def test_pci_filter_match_two(self):
         devs = inspector.pci_filter(self.devices, ['02'])
         for dev in devs:
-            print dev.get_pci_class()
+            print(dev.get_pci_class())
         self.assertEqual(len(devs), 2)
 
     def test_pci_filter_match_one(self):
